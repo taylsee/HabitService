@@ -42,7 +42,7 @@ namespace HabitService.Data.Data.Configurations
 
             builder.Property(uh => uh.IsActive)
                 .HasColumnName("is_active")
-                .HasDefaultValue(true);
+                .IsRequired();
 
             builder.HasOne(uh => uh.Habit)
                 .WithMany()
