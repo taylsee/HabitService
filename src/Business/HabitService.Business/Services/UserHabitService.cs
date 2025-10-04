@@ -20,12 +20,12 @@ namespace HabitService.Business.Services
             _habitRepository = habitRepository;
         }
 
-        public async Task<List<UserHabit>> GetUserHabitsAsync(Guid userId)
+        public async Task<List<UserHabit>> GetUserHabitsAsync(Guid userId, CancellationToken cancellationToken = default)
         {
-            return await _userHabitRepository.GetByUserIdAsync(userId);
+            return await _userHabitRepository.GetByUserIdAsync(userId, cancellationToken);
         }
 
-        public async Task<UserHabit> AddHabitToUserAsync(Guid userId, Guid habitId)
+        public async Task<UserHabit> AddHabitToUserAsync(Guid userId, Guid habitId, CancellationToken cancellationToken = default)
         {
             var habit = await _habitRepository.GetByIdAsync(habitId);
             if (habit == null)
@@ -45,10 +45,10 @@ namespace HabitService.Business.Services
                 IsActive = true
             };
 
-            return await _userHabitRepository.AddAsync(userHabit);
+            return await _userHabitRepository.AddAsync(userHabit, cancellationToken);
         }
 
-        public async Task<UserHabit> UpdateProgressAsync(Guid userHabitId, int newValue)
+        public async Task<UserHabit> UpdateProgressAsync(Guid userHabitId, int newValue, CancellationToken cancellationToken = default)
         {
             var userHabit = await _userHabitRepository.GetByIdAsync(userHabitId);
             if (userHabit == null)
@@ -63,11 +63,11 @@ namespace HabitService.Business.Services
             userHabit.CurrentValue = newValue;
 
 
-            await _userHabitRepository.UpdateAsync(userHabit);
+            await _userHabitRepository.UpdateAsync(userHabit, cancellationToken);
             return userHabit;
         }
 
-        public async Task CompleteHabitAsync(Guid userHabitId)
+        public async Task CompleteHabitAsync(Guid userHabitId, CancellationToken cancellationToken = default)
         {
             var userHabit = await _userHabitRepository.GetByIdAsync(userHabitId);
             if (userHabit == null)
@@ -76,21 +76,21 @@ namespace HabitService.Business.Services
             userHabit.IsActive = false;
             userHabit.EndDate = DateTime.UtcNow;
 
-            await _userHabitRepository.UpdateAsync(userHabit);
+            await _userHabitRepository.UpdateAsync(userHabit, cancellationToken);
         }
 
-        public async Task RemoveHabitFromUserAsync(Guid userHabitId)
+        public async Task RemoveHabitFromUserAsync(Guid userHabitId, CancellationToken cancellationToken = default)
         {
             var userHabit = await _userHabitRepository.GetByIdAsync(userHabitId);
             if (userHabit == null)
                 throw new Exception($"User habit with ID {userHabitId} not found");
 
-            await _userHabitRepository.DeleteAsync(userHabit);
+            await _userHabitRepository.DeleteAsync(userHabit, cancellationToken);
         }
 
-        public async Task<UserHabit?> GetUserHabitByIdAsync(Guid userHabitId)
+        public async Task<UserHabit?> GetUserHabitByIdAsync(Guid userHabitId, CancellationToken cancellationToken = default)
         {
-            return await _userHabitRepository.GetByIdAsync(userHabitId);
+            return await _userHabitRepository.GetByIdAsync(userHabitId, cancellationToken);
         }
     }
 }

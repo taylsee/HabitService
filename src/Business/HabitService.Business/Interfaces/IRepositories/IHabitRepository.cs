@@ -9,12 +9,12 @@ namespace HabitService.Business.Interfaces.Repositories
 {
     public interface IHabitRepository
     {
-        Task<List<Habit>> GetPredefinedHabitsAsync();
-        Task<Habit?> GetByIdAsync(Guid id);
-        Task<List<Habit>> GetUserCustomHabitsAsync(Guid userId);
-        Task<Habit> AddAsync(Habit habit);
-        Task UpdateAsync(Habit habit);
-        Task DeleteAsync(Habit habit);
-        Task<bool> ExistsAsync(Guid id);
+        Task<List<Habit>> GetPredefinedHabitsAsync(CancellationToken cancellationToken = default);
+        Task<Habit?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+        Task<List<Habit>> GetUserCustomHabitsAsync(Guid userId, CancellationToken cancellationToken = default);
+        Task<Habit> AddAsync(Habit habit, CancellationToken cancellationToken = default);
+        Task UpdateAsync(Habit habit, CancellationToken cancellationToken = default);
+        Task DeleteAsync(Habit habit, CancellationToken cancellationToken = default);
+        Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default);
     }
 }

@@ -19,17 +19,17 @@ namespace HabitService.API.Controllers
         }
 
         [HttpGet("predefined")]
-        public async Task<ActionResult<List<HabitResponse>>> GetPredefinedHabits()
+        public async Task<ActionResult<List<HabitResponse>>> GetPredefinedHabits(CancellationToken cancellationToken = default)
         {
-            var habits = await _habitCatalogService.GetPredefinedHabitsAsync();
+            var habits = await _habitCatalogService.GetPredefinedHabitsAsync(cancellationToken);
             var response = habits.Select(MapToHabitResponse).ToList();
             return Ok(response);
         }
 
         [HttpGet("user/{userId}/custom")]
-        public async Task<ActionResult<List<HabitResponse>>> GetUserCustomHabits(Guid userId)
+        public async Task<ActionResult<List<HabitResponse>>> GetUserCustomHabits(Guid userId, CancellationToken cancellationToken = default)
         {
-            var habits = await _habitCatalogService.GetUserCustomHabitsAsync(userId);
+            var habits = await _habitCatalogService.GetUserCustomHabitsAsync(userId, cancellationToken);
             var response = habits.Select(MapToHabitResponse).ToList();
             return Ok(response);
         }
@@ -37,7 +37,9 @@ namespace HabitService.API.Controllers
         [HttpPost("user/{userId}/custom")]
         public async Task<ActionResult<HabitResponse>> CreateCustomHabit(
             Guid userId,
-            [FromBody] CreateHabitRequest request)
+            [FromBody] CreateHabitRequest request,
+            CancellationToken cancellationToken = default
+            )
         {
             try
             {
@@ -46,7 +48,8 @@ namespace HabitService.API.Controllers
                     request.Name,
                     request.Description,
                     request.PeriodInDays,
-                    request.TargetValue
+                    request.TargetValue,
+                    cancellationToken
                     );
 
                 var response = MapToHabitResponse(habit);
@@ -59,9 +62,9 @@ namespace HabitService.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<HabitResponse>> GetHabitById(Guid id)
+        public async Task<ActionResult<HabitResponse>> GetHabitById(Guid id, CancellationToken cancellationToken = default)
         {
-            var habit = await _habitCatalogService.GetHabitByIdAsync(id);
+            var habit = await _habitCatalogService.GetHabitByIdAsync(id, cancellationToken);
             if (habit == null)
                 return NotFound();
 
@@ -70,11 +73,11 @@ namespace HabitService.API.Controllers
         }
 
         [HttpDelete("user/{userId}/custom/{habitId}")]
-        public async Task<IActionResult> DeleteCustomHabit(Guid userId, Guid habitId)
+        public async Task<IActionResult> DeleteCustomHabit(Guid userId, Guid habitId, CancellationToken cancellationToken = default)
         {
             try
             {
-                await _habitCatalogService.DeleteCustomHabitAsync(userId, habitId);
+                await _habitCatalogService.DeleteCustomHabitAsync(userId, habitId, cancellationToken);
                 return NoContent();
             }
             catch (Exception ex)

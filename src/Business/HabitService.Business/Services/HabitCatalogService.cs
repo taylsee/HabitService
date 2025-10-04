@@ -18,19 +18,19 @@ namespace HabitService.Business.Services
             _habitRepository = habitRepository;
         }
 
-        public async Task<List<Habit>> GetPredefinedHabitsAsync()
+        public async Task<List<Habit>> GetPredefinedHabitsAsync(CancellationToken cancellationToken = default)
         {
             
-            return await _habitRepository.GetPredefinedHabitsAsync();
+            return await _habitRepository.GetPredefinedHabitsAsync(cancellationToken);
         }
 
-        public async Task<List<Habit>> GetUserCustomHabitsAsync(Guid userId)
+        public async Task<List<Habit>> GetUserCustomHabitsAsync(Guid userId, CancellationToken cancellationToken = default)
         {
-            return await _habitRepository.GetUserCustomHabitsAsync(userId);
+            return await _habitRepository.GetUserCustomHabitsAsync(userId, cancellationToken);
         }
 
         public async Task<Habit> CreateCustomHabitAsync(Guid userId, string name, string description,
-            int PeriodInDays, int targetValue)
+            int PeriodInDays, int targetValue, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Habit name cannot be empty");
@@ -49,10 +49,10 @@ namespace HabitService.Business.Services
                 CreatedAt = DateTime.UtcNow
             };
 
-            return await _habitRepository.AddAsync(habit);
+            return await _habitRepository.AddAsync(habit, cancellationToken);
         }
 
-        public async Task DeleteCustomHabitAsync(Guid userId, Guid habitId)
+        public async Task DeleteCustomHabitAsync(Guid userId, Guid habitId, CancellationToken cancellationToken = default)
         {
             var habit = await _habitRepository.GetByIdAsync(habitId);
 
@@ -63,12 +63,12 @@ namespace HabitService.Business.Services
                 throw new UnauthorizedAccessException("User can only delete their own custom habits");
 
 
-            await _habitRepository.DeleteAsync(habit);
+            await _habitRepository.DeleteAsync(habit, cancellationToken);
         }
 
-        public async Task<Habit?> GetHabitByIdAsync(Guid habitId)
+        public async Task<Habit?> GetHabitByIdAsync(Guid habitId, CancellationToken cancellationToken = default)
         {
-            return await _habitRepository.GetByIdAsync(habitId);
+            return await _habitRepository.GetByIdAsync(habitId, cancellationToken);
         }
     }
 }

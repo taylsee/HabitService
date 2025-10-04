@@ -9,11 +9,11 @@ namespace HabitService.Business.Interfaces.IServices
 {
     public interface IUserHabitService
     {
-        Task<List<UserHabit>> GetUserHabitsAsync(Guid userId);
-        Task<UserHabit> AddHabitToUserAsync(Guid userId, Guid habitId);
-        Task<UserHabit> UpdateProgressAsync(Guid userHabitId, int newValue);
-        Task CompleteHabitAsync(Guid userHabitId);
-        Task RemoveHabitFromUserAsync(Guid userHabitId);
-        Task<UserHabit?> GetUserHabitByIdAsync(Guid userHabitId);
+        Task<List<UserHabit>> GetUserHabitsAsync(Guid userId, CancellationToken cancellationToken = default);
+        Task<UserHabit> AddHabitToUserAsync(Guid userId, Guid habitId, CancellationToken cancellationToken = default);
+        Task<UserHabit> UpdateProgressAsync(Guid userHabitId, int newValue, CancellationToken cancellationToken = default);
+        Task CompleteHabitAsync(Guid userHabitId, CancellationToken cancellationToken = default);
+        Task RemoveHabitFromUserAsync(Guid userHabitId, CancellationToken cancellationToken = default);
+        Task<UserHabit?> GetUserHabitByIdAsync(Guid userHabitId, CancellationToken cancellationToken = default);
     }
 }

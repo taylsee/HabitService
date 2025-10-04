@@ -18,19 +18,19 @@ namespace HabitService.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<UserHabitResponse>>> GetUserHabits(Guid userId)
+        public async Task<ActionResult<List<UserHabitResponse>>> GetUserHabits(Guid userId, CancellationToken cancellationToken = default)
         {
-            var userHabits = await _userHabitService.GetUserHabitsAsync(userId);
+            var userHabits = await _userHabitService.GetUserHabitsAsync(userId, cancellationToken);
             var response = userHabits.Select(MapToUserHabitResponse).ToList();
             return Ok(response);
         }
 
         [HttpPost("add/{habitId}")]
-        public async Task<ActionResult<UserHabitResponse>> AddHabitToUser(Guid userId, Guid habitId)
+        public async Task<ActionResult<UserHabitResponse>> AddHabitToUser(Guid userId, Guid habitId, CancellationToken cancellationToken = default)
         {
             try
             {
-                var userHabit = await _userHabitService.AddHabitToUserAsync(userId, habitId);
+                var userHabit = await _userHabitService.AddHabitToUserAsync(userId, habitId, cancellationToken);
                 var response = MapToUserHabitResponse(userHabit);
                 return CreatedAtAction(
                     nameof(GetUserHabitById),
@@ -47,7 +47,8 @@ namespace HabitService.API.Controllers
         public async Task<ActionResult<UserHabitResponse>> UpdateProgress(
             Guid userId,
             Guid userHabitId,
-            [FromBody] UpdateProgressRequest request)
+            [FromBody] UpdateProgressRequest request,
+            CancellationToken cancellationToken = default)
         {
             try
             {
@@ -62,11 +63,11 @@ namespace HabitService.API.Controllers
         }
 
         [HttpPost("{userHabitId}/complete")]
-        public async Task<IActionResult> CompleteHabit(Guid userId, Guid userHabitId)
+        public async Task<IActionResult> CompleteHabit(Guid userId, Guid userHabitId, CancellationToken cancellationToken = default)
         {
             try
             {
-                await _userHabitService.CompleteHabitAsync(userHabitId);
+                await _userHabitService.CompleteHabitAsync(userHabitId, cancellationToken);
                 return NoContent();
             }
             catch (Exception ex)
@@ -76,11 +77,11 @@ namespace HabitService.API.Controllers
         }
 
         [HttpDelete("{userHabitId}")]
-        public async Task<IActionResult> RemoveHabitFromUser(Guid userId, Guid userHabitId)
+        public async Task<IActionResult> RemoveHabitFromUser(Guid userId, Guid userHabitId, CancellationToken cancellationToken = default)
         {
             try
             {
-                await _userHabitService.RemoveHabitFromUserAsync(userHabitId);
+                await _userHabitService.RemoveHabitFromUserAsync(userHabitId, cancellationToken);
                 return NoContent();
             }
             catch (Exception ex)
@@ -90,9 +91,9 @@ namespace HabitService.API.Controllers
         }
 
         [HttpGet("{userHabitId}")]
-        public async Task<ActionResult<UserHabitResponse>> GetUserHabitById(Guid userId, Guid userHabitId)
+        public async Task<ActionResult<UserHabitResponse>> GetUserHabitById(Guid userId, Guid userHabitId, CancellationToken cancellationToken = default)
         {
-            var userHabit = await _userHabitService.GetUserHabitByIdAsync(userHabitId);
+            var userHabit = await _userHabitService.GetUserHabitByIdAsync(userHabitId, cancellationToken);
             if (userHabit == null || userHabit.UserId != userId)
                 return NotFound();
 
