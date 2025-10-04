@@ -62,18 +62,6 @@ namespace HabitService.Business.Services
 
             userHabit.CurrentValue = newValue;
 
-            // Если достигли цели - создаем completion
-            //if (newValue >= userHabit.Habit.TargetValue)
-            //{
-            //    var completion = new HabitCompletion
-            //    {
-            //        Id = Guid.NewGuid(),
-            //        UserHabitId = userHabitId,
-            //        CompletedDate = DateTime.UtcNow,
-            //        CompletedValue = newValue
-            //    };
-            //    userHabit.Completions.Add(completion);
-            //}
 
             await _userHabitRepository.UpdateAsync(userHabit);
             return userHabit;

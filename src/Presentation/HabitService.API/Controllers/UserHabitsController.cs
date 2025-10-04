@@ -118,12 +118,7 @@ namespace HabitService.API.Controllers
                 },
                 CurrentValue = userHabit.CurrentValue,
                 StartDate = userHabit.StartDate,
-                IsActive = userHabit.IsActive,
-                Completions = userHabit.Completions.Select(c => new HabitCompletionResponse
-                {
-                    CompletedDate = c.CompletedDate,
-                    CompletedValue = c.CompletedValue
-                }).ToList()
+                IsActive = userHabit.IsActive
             };
         }
     }

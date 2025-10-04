@@ -23,7 +23,6 @@ namespace HabitService.Data.Repositories
         {
             return await _context.UserHabits
                 .Include(uh => uh.Habit)
-                .Include(uh => uh.Completions)
                 .FirstOrDefaultAsync(uh => uh.Id == id);
         }
 
@@ -31,7 +30,6 @@ namespace HabitService.Data.Repositories
         {
             return await _context.UserHabits
                 .Include(uh => uh.Habit)
-                .Include(uh => uh.Completions)
                 .Where(uh => uh.UserId == userId && uh.IsActive)
                 .OrderBy(uh => uh.StartDate)
                 .ToListAsync();

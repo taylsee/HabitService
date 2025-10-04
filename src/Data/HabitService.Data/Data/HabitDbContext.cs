@@ -15,7 +15,6 @@ namespace HabitService.Data.Data
 
         public DbSet<Habit> Habits { get; set; }
         public DbSet<UserHabit> UserHabits { get; set; }
-        public DbSet<HabitCompletion> HabitCompletions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -118,40 +117,6 @@ namespace HabitService.Data.Data
                     .HasDatabaseName("ix_user_habits_user_id_habit_id_unique");
             });
 
-            // HabitCompletion configuration for PostgreSQL
-            modelBuilder.Entity<HabitCompletion>(entity =>
-            {
-                entity.ToTable("habit_completions");
-
-                entity.HasKey(hc => hc.Id);
-
-                entity.Property(hc => hc.Id)
-                    .HasColumnName("id")
-                    .HasDefaultValueSql("gen_random_uuid()");
-
-                entity.Property(hc => hc.UserHabitId)
-                    .HasColumnName("user_habit_id");
-
-                entity.Property(hc => hc.CompletedDate)
-                    .HasColumnName("completed_date")
-                    .HasDefaultValueSql("NOW()");
-
-                entity.Property(hc => hc.CompletedValue)
-                    .HasColumnName("completed_value");
-
-                // Relationships
-                entity.HasOne(hc => hc.UserHabit)
-                    .WithMany(uh => uh.Completions)
-                    .HasForeignKey(hc => hc.UserHabitId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                // Indexes
-                entity.HasIndex(hc => hc.UserHabitId)
-                    .HasDatabaseName("ix_habit_completions_user_habit_id");
-
-                entity.HasIndex(hc => hc.CompletedDate)
-                    .HasDatabaseName("ix_habit_completions_completed_date");
-            });
 
             // Seed predefined habits
             modelBuilder.Entity<Habit>().HasData(GetPredefinedHabits());

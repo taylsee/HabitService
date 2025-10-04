@@ -11,12 +11,5 @@
             (int)((double)CurrentValue / Habit.TargetValue * 100) : 0;
         public DateTime StartDate { get; set; }
         public bool IsActive { get; set; }
-        public List<HabitCompletionResponse> Completions { get; set; } = new();
-    }
-
-    public class HabitCompletionResponse
-    {
-        public DateTime CompletedDate { get; set; }
-        public int CompletedValue { get; set; }
     }
 }

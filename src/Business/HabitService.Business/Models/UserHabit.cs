@@ -16,6 +16,5 @@ namespace HabitService.Business.Models
         public DateTime StartDate { get; set; } = DateTime.UtcNow;
         public DateTime? EndDate { get; set; }
         public bool IsActive { get; set; } = true;
-        public List<HabitCompletion> Completions { get; set; } = new();
     }
 }
