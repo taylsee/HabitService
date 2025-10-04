@@ -1,4 +1,5 @@
 ﻿using HabitService.API.Controllers;
+using HabitService.Business.Interfaces.IRepositories;
 using HabitService.Business.Interfaces.IServices;
 using HabitService.Business.Interfaces.Repositories;
 using HabitService.Business.Services;
@@ -22,11 +23,12 @@ namespace HabitService.API
             // Business Services
             builder.Services.AddScoped<IHabitCatalogService, HabitCatalogService>();
             builder.Services.AddScoped<IUserHabitService, UserHabitService>();
+            builder.Services.AddScoped<IHabitCompletionService, HabitCompletionService>();
 
             // Repositories
             builder.Services.AddScoped<IHabitRepository, HabitRepository>();
             builder.Services.AddScoped<IUserHabitRepository, UserHabitRepository>();
-
+            builder.Services.AddScoped<IHabitCompletionRepository, HabitCompletionRepository>();
             var app = builder.Build();
 
 

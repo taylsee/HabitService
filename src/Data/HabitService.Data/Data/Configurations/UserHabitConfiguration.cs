@@ -30,9 +30,6 @@ namespace HabitService.Data.Data.Configurations
             builder.Property(uh => uh.HabitId)
                 .HasColumnName("habit_id");
 
-            builder.Property(uh => uh.CurrentValue)
-                .HasColumnName("current_value");
-
             builder.Property(uh => uh.StartDate)
                 .HasColumnName("start_date")
                 .HasDefaultValueSql("NOW()");

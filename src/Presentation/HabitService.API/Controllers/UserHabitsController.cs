@@ -1,7 +1,6 @@
 ﻿using HabitService.API.DTOs;
 using HabitService.Business.Interfaces.IServices;
 using HabitService.Business.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HabitService.API.Controllers
@@ -11,17 +10,26 @@ namespace HabitService.API.Controllers
     public class UserHabitsController : ControllerBase
     {
         private readonly IUserHabitService _userHabitService;
+        private readonly IHabitCompletionService _completionService;
 
-        public UserHabitsController(IUserHabitService userHabitService)
+        public UserHabitsController(IUserHabitService userHabitService, IHabitCompletionService completionService)
         {
             _userHabitService = userHabitService;
+            _completionService = completionService;
         }
 
         [HttpGet]
         public async Task<ActionResult<List<UserHabitResponse>>> GetUserHabits(Guid userId, CancellationToken cancellationToken = default)
         {
             var userHabits = await _userHabitService.GetUserHabitsAsync(userId, cancellationToken);
-            var response = userHabits.Select(MapToUserHabitResponse).ToList();
+
+            var response = new List<UserHabitResponse>();
+            foreach (var userHabit in userHabits)
+            {
+                var item = await MapToUserHabitResponse(userHabit, cancellationToken);
+                response.Add(item);
+            }
+
             return Ok(response);
         }
 
@@ -31,44 +39,11 @@ namespace HabitService.API.Controllers
             try
             {
                 var userHabit = await _userHabitService.AddHabitToUserAsync(userId, habitId, cancellationToken);
-                var response = MapToUserHabitResponse(userHabit);
+                var response = await MapToUserHabitResponse(userHabit, cancellationToken);
                 return CreatedAtAction(
                     nameof(GetUserHabitById),
                     new { userId, userHabitId = userHabit.Id },
                     response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
-        }
-
-        [HttpPut("{userHabitId}/progress")]
-        public async Task<ActionResult<UserHabitResponse>> UpdateProgress(
-            Guid userId,
-            Guid userHabitId,
-            [FromBody] UpdateProgressRequest request,
-            CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                var userHabit = await _userHabitService.UpdateProgressAsync(userHabitId, request.NewValue);
-                var response = MapToUserHabitResponse(userHabit);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
-        }
-
-        [HttpPost("{userHabitId}/complete")]
-        public async Task<IActionResult> CompleteHabit(Guid userId, Guid userHabitId, CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                await _userHabitService.CompleteHabitAsync(userHabitId, cancellationToken);
-                return NoContent();
             }
             catch (Exception ex)
             {
@@ -97,12 +72,14 @@ namespace HabitService.API.Controllers
             if (userHabit == null || userHabit.UserId != userId)
                 return NotFound();
 
-            var response = MapToUserHabitResponse(userHabit);
+            var response = await MapToUserHabitResponse(userHabit, cancellationToken);
             return Ok(response);
         }
 
-        private static UserHabitResponse MapToUserHabitResponse(UserHabit userHabit)
+        private async Task<UserHabitResponse> MapToUserHabitResponse(UserHabit userHabit, CancellationToken cancellationToken = default)
         {
+            var progress = await _completionService.GetCurrentProgressAsync(userHabit.Id, cancellationToken);
+
             return new UserHabitResponse
             {
                 Id = userHabit.Id,
@@ -117,9 +94,12 @@ namespace HabitService.API.Controllers
                     TargetValue = userHabit.Habit.TargetValue,
                     CreatedAt = userHabit.Habit.CreatedAt
                 },
-                CurrentValue = userHabit.CurrentValue,
                 StartDate = userHabit.StartDate,
-                IsActive = userHabit.IsActive
+                IsActive = userHabit.IsActive,
+                CurrentProgress = progress.CurrentValue,
+                IsCompleted = progress.IsCompleted,
+                Remaining = progress.Remaining,
+                ProgressPercentage = progress.ProgressPercentage
             };
         }
     }

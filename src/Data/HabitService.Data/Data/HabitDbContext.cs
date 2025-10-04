@@ -15,11 +15,13 @@ namespace HabitService.Data.Data
         public HabitDbContext(DbContextOptions<HabitDbContext> options) : base(options) { }
         public DbSet<Habit> Habits { get; set; }
         public DbSet<UserHabit> UserHabits { get; set; }
+        public DbSet<HabitCompletion> HabitCompletions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new HabitConfiguration());
             modelBuilder.ApplyConfiguration(new UserHabitConfiguration());
+            modelBuilder.ApplyConfiguration(new HabitCompletionConfiguration());
 
             base.OnModelCreating(modelBuilder);
 

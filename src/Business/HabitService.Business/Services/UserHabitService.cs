@@ -9,20 +9,32 @@ using System.Threading.Tasks;
 
 namespace HabitService.Business.Services
 {
-    public class UserHabitService: IUserHabitService
+    public class UserHabitService : IUserHabitService
     {
         private readonly IUserHabitRepository _userHabitRepository;
         private readonly IHabitRepository _habitRepository;
+        private readonly IHabitCompletionService _completionService;
 
-        public UserHabitService(IUserHabitRepository userHabitRepository, IHabitRepository habitRepository)
+        public UserHabitService(
+            IUserHabitRepository userHabitRepository,
+            IHabitRepository habitRepository,
+            IHabitCompletionService completionService)
         {
             _userHabitRepository = userHabitRepository;
             _habitRepository = habitRepository;
+            _completionService = completionService;
         }
 
         public async Task<List<UserHabit>> GetUserHabitsAsync(Guid userId, CancellationToken cancellationToken = default)
         {
-            return await _userHabitRepository.GetByUserIdAsync(userId, cancellationToken);
+            var habits = await _userHabitRepository.GetByUserIdAsync(userId, cancellationToken);
+
+            foreach (var userHabit in habits)
+            {
+                await _completionService.ResetIfPeriodEndedAsync(userHabit, cancellationToken);
+            }
+
+            return habits;
         }
 
         public async Task<UserHabit> AddHabitToUserAsync(Guid userId, Guid habitId, CancellationToken cancellationToken = default)
@@ -40,43 +52,11 @@ namespace HabitService.Business.Services
                 Id = Guid.NewGuid(),
                 UserId = userId,
                 HabitId = habitId,
-                CurrentValue = 0,
                 StartDate = DateTime.UtcNow,
                 IsActive = true
             };
 
             return await _userHabitRepository.AddAsync(userHabit, cancellationToken);
-        }
-
-        public async Task<UserHabit> UpdateProgressAsync(Guid userHabitId, int newValue, CancellationToken cancellationToken = default)
-        {
-            var userHabit = await _userHabitRepository.GetByIdAsync(userHabitId);
-            if (userHabit == null)
-                throw new Exception($"User habit with ID {userHabitId} not found");
-
-            if (!userHabit.IsActive)
-                throw new InvalidOperationException("Cannot update progress for inactive habit");
-
-            if (newValue < 0)
-                throw new ArgumentException("Progress value cannot be negative");
-
-            userHabit.CurrentValue = newValue;
-
-
-            await _userHabitRepository.UpdateAsync(userHabit, cancellationToken);
-            return userHabit;
-        }
-
-        public async Task CompleteHabitAsync(Guid userHabitId, CancellationToken cancellationToken = default)
-        {
-            var userHabit = await _userHabitRepository.GetByIdAsync(userHabitId);
-            if (userHabit == null)
-                throw new Exception($"User habit with ID {userHabitId} not found");
-
-            userHabit.IsActive = false;
-            userHabit.EndDate = DateTime.UtcNow;
-
-            await _userHabitRepository.UpdateAsync(userHabit, cancellationToken);
         }
 
         public async Task RemoveHabitFromUserAsync(Guid userHabitId, CancellationToken cancellationToken = default)

@@ -20,7 +20,6 @@ namespace HabitService.Business.Services
 
         public async Task<List<Habit>> GetPredefinedHabitsAsync(CancellationToken cancellationToken = default)
         {
-            
             return await _habitRepository.GetPredefinedHabitsAsync(cancellationToken);
         }
 
