@@ -29,6 +29,9 @@ namespace HabitService.Business.Services
             if (userHabit == null || !userHabit.IsActive)
                 throw new InvalidOperationException("User habit not found or not active");
 
+            if (value <= 0)
+                throw new ArgumentException("Value must be positive", nameof(value));
+
             await ResetIfPeriodEndedAsync(userHabit, cancellationToken);
 
             var progress = await GetCurrentProgressAsync(userHabitId, cancellationToken);

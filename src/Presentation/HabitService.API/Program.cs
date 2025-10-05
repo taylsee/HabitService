@@ -6,6 +6,8 @@ using HabitService.Business.Services;
 using HabitService.Data.Data;
 using HabitService.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 namespace HabitService.API
 {
@@ -16,7 +18,22 @@ namespace HabitService.API
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Habit Service API",
+                    Version = "v1",
+                    Description = "Микросервис для управления привычками"
+                });
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                if (File.Exists(xmlPath)) c.IncludeXmlComments(xmlPath);
+                
+            });
+
+
             builder.Services.AddDbContext<HabitDbContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 

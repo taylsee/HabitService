@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HabitService.API.Controllers
 {
+    /// <summary>
+    /// Контроллер для управления выполнениями привычек
+    /// </summary>
     [ApiController]
     [Route("api/users/{userId}/habits/{userHabitId}/completions")]
     public class HabitCompletionsController : ControllerBase
@@ -13,7 +16,7 @@ namespace HabitService.API.Controllers
         private readonly IUserHabitService _userHabitService;
         private readonly IMapper _mapper;
 
-        public HabitCompletionsController(IHabitCompletionService completionService, 
+        public HabitCompletionsController(IHabitCompletionService completionService,
             IUserHabitService userHabitService,
             IMapper mapper)
         {
@@ -22,13 +25,33 @@ namespace HabitService.API.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Проверяет принадлежность пользовательской привычки пользователю
+        /// </summary>
+        /// <param name="userId">Идентификатор пользователя</param>
+        /// <param name="userHabitId">Идентификатор пользовательской привычки</param>
+        /// <param name="cancellationToken">Токен отмены операции</param>
+        /// <returns>True если привычка принадлежит пользователю</returns>
         private async Task<bool> IsUserHabitOwnerAsync(Guid userId, Guid userHabitId, CancellationToken cancellationToken)
         {
             var userHabit = await _userHabitService.GetUserHabitByIdAsync(userHabitId, cancellationToken);
             return userHabit != null && userHabit.UserId == userId;
         }
 
+        /// <summary>
+        /// Получить список всех выполнений привычки
+        /// </summary>
+        /// <param name="userId">Идентификатор пользователя</param>
+        /// <param name="userHabitId">Идентификатор пользовательской привычки</param>
+        /// <param name="cancellationToken">Токен отмены операции</param>
+        /// <returns>Список выполнений привычки</returns>
+        /// <response code="200">Успешное получение списка выполнений</response>
+        /// <response code="400">Ошибка в запросе</response>
+        /// <response code="404">Привычка не найдена или не принадлежит пользователю</response>
         [HttpGet]
+        [ProducesResponseType(typeof(List<HabitCompletionResponse>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<List<HabitCompletionResponse>>> GetCompletions(
             Guid userId,
             Guid userHabitId,
@@ -49,7 +72,21 @@ namespace HabitService.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Получить конкретное выполнение привычки по идентификатору
+        /// </summary>
+        /// <param name="userId">Идентификатор пользователя</param>
+        /// <param name="userHabitId">Идентификатор пользовательской привычки</param>
+        /// <param name="completionId">Идентификатор выполнения</param>
+        /// <param name="cancellationToken">Токен отмены операции</param>
+        /// <returns>Данные выполнения привычки</returns>
+        /// <response code="200">Успешное получение выполнения</response>
+        /// <response code="400">Ошибка в запросе</response>
+        /// <response code="404">Выполнение не найдено или не принадлежит привычке</response>
         [HttpGet("{completionId}")]
+        [ProducesResponseType(typeof(HabitCompletionResponse), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<HabitCompletionResponse>> GetCompletionById(
             Guid userId,
             Guid userHabitId,
@@ -74,7 +111,20 @@ namespace HabitService.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Получить текущий прогресс выполнения привычки
+        /// </summary>
+        /// <param name="userId">Идентификатор пользователя</param>
+        /// <param name="userHabitId">Идентификатор пользовательской привычки</param>
+        /// <param name="cancellationToken">Токен отмены операции</param>
+        /// <returns>Текущий прогресс выполнения привычки</returns>
+        /// <response code="200">Успешное получение прогресса</response>
+        /// <response code="400">Ошибка в запросе</response>
+        /// <response code="404">Привычка не найдена или не принадлежит пользователю</response>
         [HttpGet("progress")]
+        [ProducesResponseType(typeof(HabitProgressResponse), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<HabitProgressResponse>> GetCurrentProgress(
             Guid userId,
             Guid userHabitId,
@@ -95,7 +145,21 @@ namespace HabitService.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Зафиксировать выполнение привычки
+        /// </summary>
+        /// <param name="userId">Идентификатор пользователя</param>
+        /// <param name="userHabitId">Идентификатор пользовательской привычки</param>
+        /// <param name="request">Данные выполнения</param>
+        /// <param name="cancellationToken">Токен отмены операции</param>
+        /// <returns>Созданное выполнение привычки</returns>
+        /// <response code="200">Успешное выполнение привычки</response>
+        /// <response code="400">Неверные данные запроса</response>
+        /// <response code="404">Привычка не найдена или не принадлежит пользователю</response>
         [HttpPost]
+        [ProducesResponseType(typeof(HabitCompletionResponse), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<HabitCompletionResponse>> CompleteHabit(
             Guid userId,
             Guid userHabitId,
@@ -125,7 +189,20 @@ namespace HabitService.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Сбросить прогресс выполнения привычки
+        /// </summary>
+        /// <param name="userId">Идентификатор пользователя</param>
+        /// <param name="userHabitId">Идентификатор пользовательской привычки</param>
+        /// <param name="cancellationToken">Токен отмены операции</param>
+        /// <returns>Результат операции</returns>
+        /// <response code="204">Прогресс успешно сброшен</response>
+        /// <response code="400">Неверные данные запроса</response>
+        /// <response code="404">Привычка не найдена или не принадлежит пользователю</response>
         [HttpPut("reset")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> ResetProgress(
             Guid userId,
             Guid userHabitId,
@@ -149,7 +226,22 @@ namespace HabitService.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Обновить данные выполнения привычки
+        /// </summary>
+        /// <param name="userId">Идентификатор пользователя</param>
+        /// <param name="userHabitId">Идентификатор пользовательской привычки</param>
+        /// <param name="completionId">Идентификатор выполнения</param>
+        /// <param name="request">Новые данные выполнения</param>
+        /// <param name="cancellationToken">Токен отмены операции</param>
+        /// <returns>Обновленное выполнение привычки</returns>
+        /// <response code="200">Успешное обновление выполнения</response>
+        /// <response code="400">Неверные данные запроса</response>
+        /// <response code="404">Выполнение не найдено или не принадлежит привычке</response>
         [HttpPut("{completionId}")]
+        [ProducesResponseType(typeof(HabitCompletionResponse), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<HabitCompletionResponse>> UpdateCompletion(
             Guid userId,
             Guid userHabitId,
@@ -185,7 +277,21 @@ namespace HabitService.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Удалить выполнение привычки
+        /// </summary>
+        /// <param name="userId">Идентификатор пользователя</param>
+        /// <param name="userHabitId">Идентификатор пользовательской привычки</param>
+        /// <param name="completionId">Идентификатор выполнения</param>
+        /// <param name="cancellationToken">Токен отмены операции</param>
+        /// <returns>Результат операции</returns>
+        /// <response code="204">Выполнение успешно удалено</response>
+        /// <response code="400">Неверные данные запроса</response>
+        /// <response code="404">Выполнение не найдено или не принадлежит привычке</response>
         [HttpDelete("{completionId}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> DeleteCompletion(
             Guid userId,
             Guid userHabitId,
