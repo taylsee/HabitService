@@ -111,13 +111,13 @@ namespace HabitService.Business.Services
             if (userHabit.Habit.PeriodInDays <= 0)
                 throw new InvalidOperationException("PeriodInDays must be positive");
 
-            var elapsedTime = DateTime.UtcNow - userHabit.StartDate;
+            var today = DateTime.UtcNow.Date;
+            var startDate = userHabit.StartDate.Date;
 
-            var completedPeriods = (int)(elapsedTime.TotalDays / userHabit.Habit.PeriodInDays);
+            var daysSinceStart = (today - startDate).Days;
+            var completedPeriods = (int)Math.Floor((double)daysSinceStart / userHabit.Habit.PeriodInDays);
 
-            var periodStart = userHabit.StartDate.AddDays(completedPeriods * userHabit.Habit.PeriodInDays);
-
-
+            var periodStart = startDate.AddDays(completedPeriods * userHabit.Habit.PeriodInDays);
             var periodEnd = periodStart.AddDays(userHabit.Habit.PeriodInDays);
 
             return (periodStart, periodEnd);
