@@ -15,5 +15,7 @@ namespace HabitService.Business.Interfaces.IServices
             int PeriodInDays, int targetValue, CancellationToken cancellationToken = default);
         Task DeleteCustomHabitAsync(Guid userId, Guid habitId, CancellationToken cancellationToken = default);
         Task<Habit?> GetHabitByIdAsync(Guid habitId, CancellationToken cancellationToken = default);
+        Task UpdateHabitAsync(Guid habitId, string name, string description,
+            int periodInDays, int targetValue, CancellationToken cancellationToken = default);
     }
 }

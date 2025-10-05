@@ -59,6 +59,11 @@ namespace HabitService.Business.Services
             return await _userHabitRepository.AddAsync(userHabit, cancellationToken);
         }
 
+        public async Task UpdateUserHabitAsync(UserHabit userHabit, CancellationToken cancellationToken = default)
+        {
+            await _userHabitRepository.UpdateAsync(userHabit, cancellationToken);
+        }
+
         public async Task RemoveHabitFromUserAsync(Guid userHabitId, CancellationToken cancellationToken = default)
         {
             var userHabit = await _userHabitRepository.GetByIdAsync(userHabitId);

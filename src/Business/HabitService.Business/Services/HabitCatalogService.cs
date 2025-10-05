@@ -27,6 +27,26 @@ namespace HabitService.Business.Services
         {
             return await _habitRepository.GetUserCustomHabitsAsync(userId, cancellationToken);
         }
+        public async Task UpdateHabitAsync(Guid habitId, string name, string description,
+            int periodInDays, int targetValue, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Habit name cannot be empty");
+
+            if (targetValue <= 0)
+                throw new ArgumentException("Target value must be positive");
+
+            var habit = await _habitRepository.GetByIdAsync(habitId, cancellationToken);
+            if (habit == null)
+                throw new Exception($"Habit with ID {habitId} not found");
+
+            habit.Name = name.Trim();
+            habit.Description = description?.Trim() ?? "";
+            habit.PeriodInDays = periodInDays;
+            habit.TargetValue = targetValue;
+
+            await _habitRepository.UpdateAsync(habit, cancellationToken);
+        }
 
         public async Task<Habit> CreateCustomHabitAsync(Guid userId, string name, string description,
             int PeriodInDays, int targetValue, CancellationToken cancellationToken = default)

@@ -11,7 +11,7 @@ namespace HabitService.API.Mapping
         {
             CreateMap<HabitCompletion, HabitCompletionResponse>();
 
-            CreateMap<CompleteHabitRequest, HabitCompletion>()
+            CreateMap<CompleteUpdateHabitRequest, HabitCompletion>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.UserHabitId, opt => opt.Ignore())
                 .ForMember(dest => dest.CompletedAt, opt => opt.Ignore());

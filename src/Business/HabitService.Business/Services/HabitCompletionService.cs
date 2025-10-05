@@ -50,6 +50,23 @@ namespace HabitService.Business.Services
             return await _completionRepository.AddAsync(completion, cancellationToken);
         }
 
+        public async Task<HabitCompletion?> GetCompletionByIdAsync(Guid completionId, CancellationToken cancellationToken = default)
+        {
+            return await _completionRepository.GetByIdAsync(completionId, cancellationToken);
+        }
+
+        public async Task UpdateCompletionAsync(Guid completionId, int value, string? notes, CancellationToken cancellationToken = default)
+        {
+            var completion = await _completionRepository.GetByIdAsync(completionId, cancellationToken);
+            if (completion == null)
+                throw new InvalidOperationException("Completion record not found");
+
+            completion.Value = value;
+            completion.Notes = notes;
+
+            await _completionRepository.UpdateAsync(completion, cancellationToken);
+        }
+
         public async Task<List<HabitCompletion>> GetCompletionsAsync(Guid userHabitId, CancellationToken cancellationToken = default)
         {
             return await _completionRepository.GetByUserHabitIdAsync(userHabitId, cancellationToken);

@@ -13,5 +13,6 @@ namespace HabitService.Business.Interfaces.IServices
         Task<UserHabit> AddHabitToUserAsync(Guid userId, Guid habitId, CancellationToken cancellationToken = default);
         Task RemoveHabitFromUserAsync(Guid userHabitId, CancellationToken cancellationToken = default);
         Task<UserHabit?> GetUserHabitByIdAsync(Guid userHabitId, CancellationToken cancellationToken = default);
+        Task UpdateUserHabitAsync(UserHabit userHabit, CancellationToken cancellationToken = default);
     }
 }

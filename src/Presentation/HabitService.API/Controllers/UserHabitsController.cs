@@ -52,6 +52,8 @@ namespace HabitService.API.Controllers
         [HttpPost("add/{habitId}")]
         public async Task<ActionResult<UserHabitResponse>> AddHabitToUser(Guid userId, Guid habitId, CancellationToken cancellationToken = default)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             try
             {
                 var userHabit = await _userHabitService.AddHabitToUserAsync(userId, habitId, cancellationToken);
@@ -70,8 +72,15 @@ namespace HabitService.API.Controllers
         [HttpDelete("{userHabitId}")]
         public async Task<IActionResult> RemoveHabitFromUser(Guid userId, Guid userHabitId, CancellationToken cancellationToken = default)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             try
             {
+                var userHabit = await _userHabitService.GetUserHabitByIdAsync(userHabitId, cancellationToken);
+                if (userHabit == null || userHabit.UserId != userId)
+                    return NotFound();
+
                 await _userHabitService.RemoveHabitFromUserAsync(userHabitId, cancellationToken);
                 return NoContent();
             }
