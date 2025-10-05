@@ -1,3 +1,4 @@
+using AutoMapper;
 using HabitService.API.DTOs;
 using HabitService.Business.Interfaces.IServices;
 using HabitService.Business.Models;
@@ -11,17 +12,19 @@ namespace HabitService.API.Controllers
     public class HabitsController : ControllerBase
     {
         private readonly IHabitCatalogService _habitCatalogService;
+        private readonly IMapper _mapper;
 
-        public HabitsController(IHabitCatalogService habitCatalogService)
+        public HabitsController(IHabitCatalogService habitCatalogService, IMapper mapper)
         {
             _habitCatalogService = habitCatalogService;
+            _mapper = mapper;
         }
 
         [HttpGet("predefined")]
         public async Task<ActionResult<List<HabitResponse>>> GetPredefinedHabits(CancellationToken cancellationToken = default)
         {
             var habits = await _habitCatalogService.GetPredefinedHabitsAsync(cancellationToken);
-            var response = habits.Select(MapToHabitResponse).ToList();
+            var response = _mapper.Map<List<HabitResponse>>(habits);
             return Ok(response);
         }
 
@@ -29,7 +32,18 @@ namespace HabitService.API.Controllers
         public async Task<ActionResult<List<HabitResponse>>> GetUserCustomHabits(Guid userId, CancellationToken cancellationToken = default)
         {
             var habits = await _habitCatalogService.GetUserCustomHabitsAsync(userId, cancellationToken);
-            var response = habits.Select(MapToHabitResponse).ToList();
+            var response = _mapper.Map<List<HabitResponse>>(habits);
+            return Ok(response);
+        }
+
+        [HttpGet("{habitId}")]
+        public async Task<ActionResult<HabitResponse>> GetHabitById(Guid habitId, CancellationToken cancellationToken = default)
+        {
+            var habit = await _habitCatalogService.GetHabitByIdAsync(habitId, cancellationToken);
+            if (habit == null)
+                return NotFound();
+
+            var response = _mapper.Map<HabitResponse>(habit);
             return Ok(response);
         }
 
@@ -37,38 +51,27 @@ namespace HabitService.API.Controllers
         public async Task<ActionResult<HabitResponse>> CreateCustomHabit(
             Guid userId,
             [FromBody] CreateHabitRequest request,
-            CancellationToken cancellationToken = default
-            )
+            CancellationToken cancellationToken = default)
         {
             try
             {
-                var habit = await _habitCatalogService.CreateCustomHabitAsync(
+                var habit = _mapper.Map<Habit>(request);
+                var createdHabit = await _habitCatalogService.CreateCustomHabitAsync(
                     userId,
-                    request.Name,
-                    request.Description,
-                    request.PeriodInDays,
-                    request.TargetValue,
+                    habit.Name,
+                    habit.Description,
+                    habit.PeriodInDays,
+                    habit.TargetValue,
                     cancellationToken
-                    );
+                );
 
-                var response = MapToHabitResponse(habit);
-                return CreatedAtAction(nameof(GetHabitById), new { id = habit.Id }, response);
+                var response = _mapper.Map<HabitResponse>(createdHabit);
+                return CreatedAtAction(nameof(GetHabitById), new { habitId = createdHabit.Id }, response);
             }
             catch (Exception ex)
             {
                 return BadRequest(new { error = ex.Message });
             }
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<HabitResponse>> GetHabitById(Guid id, CancellationToken cancellationToken = default)
-        {
-            var habit = await _habitCatalogService.GetHabitByIdAsync(id, cancellationToken);
-            if (habit == null)
-                return NotFound();
-
-            var response = MapToHabitResponse(habit);
-            return Ok(response);
         }
 
         [HttpDelete("user/{userId}/custom/{habitId}")]
@@ -83,19 +86,6 @@ namespace HabitService.API.Controllers
             {
                 return BadRequest(new { error = ex.Message });
             }
-        }
-
-        private static HabitResponse MapToHabitResponse(Habit habit)
-        {
-            return new HabitResponse
-            {
-                Id = habit.Id,
-                Name = habit.Name,
-                Description = habit.Description,
-                PeriodInDays = habit.PeriodInDays,
-                TargetValue = habit.TargetValue,
-                CreatedAt = habit.CreatedAt
-            };
         }
     }
 }

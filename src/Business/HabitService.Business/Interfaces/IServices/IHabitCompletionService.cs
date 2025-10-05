@@ -15,6 +15,7 @@ namespace HabitService.Business.Interfaces.IServices
         Task<bool> CanCompleteHabitTodayAsync(Guid userHabitId, CancellationToken cancellationToken = default);
         Task ResetHabitProgressAsync(UserHabit userHabit, CancellationToken cancellationToken = default);
         Task<bool> ResetIfPeriodEndedAsync(UserHabit userHabit, CancellationToken cancellationToken = default);
+        Task DeleteCompletionAsync(Guid completionId, CancellationToken cancellationToken = default);
     }
 
     public class HabitProgress

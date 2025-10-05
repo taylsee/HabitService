@@ -29,7 +29,12 @@ namespace HabitService.API
             builder.Services.AddScoped<IHabitRepository, HabitRepository>();
             builder.Services.AddScoped<IUserHabitRepository, UserHabitRepository>();
             builder.Services.AddScoped<IHabitCompletionRepository, HabitCompletionRepository>();
+
+            //Mapper
+            builder.Services.AddAutoMapper(typeof(Program));
+
             var app = builder.Build();
+
 
 
             if (app.Environment.IsDevelopment())

@@ -122,5 +122,14 @@ namespace HabitService.Business.Services
 
             return (periodStart, periodEnd);
         }
+
+        public async Task DeleteCompletionAsync(Guid completionId, CancellationToken cancellationToken = default)
+        {
+            var completion = await _completionRepository.GetByIdAsync(completionId, cancellationToken);
+            if (completion == null)
+                throw new InvalidOperationException("Completion record not found");
+
+            await _completionRepository.DeleteAsync(completion, cancellationToken);
+        }
     }
 }

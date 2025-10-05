@@ -1,4 +1,5 @@
-﻿using HabitService.API.DTOs;
+﻿using AutoMapper;
+using HabitService.API.DTOs;
 using HabitService.Business.Interfaces.IServices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,42 +11,15 @@ namespace HabitService.API.Controllers
     {
         private readonly IHabitCompletionService _completionService;
         private readonly IUserHabitService _userHabitService;
+        private readonly IMapper _mapper;
 
-        public HabitCompletionsController(IHabitCompletionService completionService, IUserHabitService userHabitService)
+        public HabitCompletionsController(IHabitCompletionService completionService, 
+            IUserHabitService userHabitService,
+            IMapper mapper)
         {
             _completionService = completionService;
             _userHabitService = userHabitService;
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<HabitCompletionResponse>> CompleteHabit(
-            Guid userHabitId,
-            [FromBody] CompleteHabitRequest request,
-            CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                var completion = await _completionService.CompleteHabitAsync(
-                    userHabitId,
-                    request.Value,
-                    request.Notes,
-                    cancellationToken);
-
-                var response = new HabitCompletionResponse
-                {
-                    Id = completion.Id,
-                    UserHabitId = completion.UserHabitId,
-                    CompletedAt = completion.CompletedAt,
-                    Value = completion.Value,
-                    Notes = completion.Notes
-                };
-
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -56,15 +30,7 @@ namespace HabitService.API.Controllers
             try
             {
                 var completions = await _completionService.GetCompletionsAsync(userHabitId, cancellationToken);
-                var response = completions.Select(c => new HabitCompletionResponse
-                {
-                    Id = c.Id,
-                    UserHabitId = c.UserHabitId,
-                    CompletedAt = c.CompletedAt,
-                    Value = c.Value,
-                    Notes = c.Notes
-                }).ToList();
-
+                var response = _mapper.Map<List<HabitCompletionResponse>>(completions);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -81,17 +47,7 @@ namespace HabitService.API.Controllers
             try
             {
                 var progress = await _completionService.GetCurrentProgressAsync(userHabitId, cancellationToken);
-                var response = new HabitProgressResponse
-                {
-                    CurrentValue = progress.CurrentValue,
-                    TargetValue = progress.TargetValue,
-                    Remaining = progress.Remaining,
-                    ProgressPercentage = progress.ProgressPercentage,
-                    IsCompleted = progress.IsCompleted,
-                    PeriodStart = progress.PeriodStart,
-                    PeriodEnd = progress.PeriodEnd
-                };
-
+                var response = _mapper.Map<HabitProgressResponse>(progress);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -100,15 +56,22 @@ namespace HabitService.API.Controllers
             }
         }
 
-        [HttpGet("can-complete-today")]
-        public async Task<ActionResult<bool>> CanCompleteHabitToday(
-            Guid userHabitId,
-            CancellationToken cancellationToken = default)
+        [HttpPost]
+        public async Task<ActionResult<HabitCompletionResponse>> CompleteHabit(
+                   Guid userHabitId,
+                   [FromBody] CompleteHabitRequest request,
+                   CancellationToken cancellationToken = default)
         {
             try
             {
-                var canComplete = await _completionService.CanCompleteHabitTodayAsync(userHabitId, cancellationToken);
-                return Ok(canComplete);
+                var completion = await _completionService.CompleteHabitAsync(
+                    userHabitId,
+                    request.Value,
+                    request.Notes,
+                    cancellationToken);
+
+                var response = _mapper.Map<HabitCompletionResponse>(completion);
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -116,7 +79,7 @@ namespace HabitService.API.Controllers
             }
         }
 
-        [HttpPost("reset")]
+        [HttpPut("reset")]
         public async Task<IActionResult> ResetProgress(
             Guid userHabitId,
             CancellationToken cancellationToken = default)
@@ -134,5 +97,24 @@ namespace HabitService.API.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+
+        [HttpDelete("{completionId}")]
+        public async Task<IActionResult> DeleteCompletion(
+        Guid userHabitId,
+        Guid completionId,
+        CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                await _completionService.DeleteCompletionAsync(completionId, cancellationToken);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+
     }
 }

@@ -78,20 +78,20 @@ namespace HabitService.Data.Migrations
                 columns: new[] { "id", "created_at", "created_by", "description", "name", "period_in_days", "target_value" },
                 values: new object[,]
                 {
-                    { new Guid("11111111-1111-1111-1111-111111111111"), new DateTime(2025, 10, 4, 23, 38, 0, 990, DateTimeKind.Utc).AddTicks(6402), null, "Поддержание водного баланса организма", "Пить 2 литра воды в день", 1, 8 },
-                    { new Guid("12345678-1234-1234-1234-123456789012"), new DateTime(2025, 10, 4, 23, 38, 0, 990, DateTimeKind.Utc).AddTicks(6448), null, "Ежедневное отслеживание трат", "Учет расходов", 1, 1 },
-                    { new Guid("22222222-2222-2222-2222-222222222222"), new DateTime(2025, 10, 4, 23, 38, 0, 990, DateTimeKind.Utc).AddTicks(6404), null, "Ежедневная физическая активность для бодрости", "Утренняя зарядка 15 минут", 1, 1 },
-                    { new Guid("23456789-2345-2345-2345-234567890123"), new DateTime(2025, 10, 4, 23, 38, 0, 990, DateTimeKind.Utc).AddTicks(6449), null, "Регулярные накопления", "Откладывать 10% от дохода", 30, 1 },
-                    { new Guid("33333333-3333-3333-3333-333333333333"), new DateTime(2025, 10, 4, 23, 38, 0, 990, DateTimeKind.Utc).AddTicks(6407), null, "Регулярные интенсивные тренировки", "Спорт 3 раза в неделю", 7, 3 },
-                    { new Guid("44444444-4444-4444-4444-444444444444"), new DateTime(2025, 10, 4, 23, 38, 0, 990, DateTimeKind.Utc).AddTicks(6409), null, "Поддержание гигиены полости рта", "Чистить зубы 2 раза в день", 1, 2 },
-                    { new Guid("45678901-4567-4567-4567-456789012345"), new DateTime(2025, 10, 4, 23, 38, 0, 990, DateTimeKind.Utc).AddTicks(6452), null, "Социальная активность", "Встреча с друзьями", 7, 1 },
-                    { new Guid("55555555-5555-5555-5555-555555555555"), new DateTime(2025, 10, 4, 23, 38, 0, 990, DateTimeKind.Utc).AddTicks(6410), null, "Ежедневное чтение для саморазвития", "Читать 30 минут в день", 1, 1 },
-                    { new Guid("66666666-6666-6666-6666-666666666666"), new DateTime(2025, 10, 4, 23, 38, 0, 990, DateTimeKind.Utc).AddTicks(6437), null, "Регулярное изучение иностранного языка", "Изучать английский 20 минут", 1, 1 },
-                    { new Guid("77777777-7777-7777-7777-777777777777"), new DateTime(2025, 10, 4, 23, 38, 0, 990, DateTimeKind.Utc).AddTicks(6439), null, "Развитие через аудиоконтент", "Слушать образовательный подкаст", 7, 2 },
-                    { new Guid("88888888-8888-8888-8888-888888888888"), new DateTime(2025, 10, 4, 23, 38, 0, 990, DateTimeKind.Utc).AddTicks(6441), null, "Ежедневная практика mindfulness", "Медитировать 10 минут", 1, 1 },
-                    { new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), new DateTime(2025, 10, 4, 23, 38, 0, 990, DateTimeKind.Utc).AddTicks(6442), null, "Ежедневные прогулки для снятия стресса", "Прогулка на свежем воздухе", 1, 1 },
-                    { new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), new DateTime(2025, 10, 4, 23, 38, 0, 990, DateTimeKind.Utc).AddTicks(6445), null, "Составление плана на следующий день", "Планировать день с вечера", 1, 1 },
-                    { new Guid("dddddddd-dddd-dddd-dddd-dddddddddddd"), new DateTime(2025, 10, 4, 23, 38, 0, 990, DateTimeKind.Utc).AddTicks(6446), null, "Организация входящих сообщений", "Разбор почты 2 раза в день", 1, 2 }
+                    { new Guid("11111111-1111-1111-1111-111111111111"), new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8114), null, "Поддержание водного баланса организма", "Пить 2 литра воды в день", 1, 8 },
+                    { new Guid("12345678-1234-1234-1234-123456789012"), new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8168), null, "Ежедневное отслеживание трат", "Учет расходов", 1, 1 },
+                    { new Guid("22222222-2222-2222-2222-222222222222"), new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8121), null, "Ежедневная физическая активность для бодрости", "Утренняя зарядка 15 минут", 1, 1 },
+                    { new Guid("23456789-2345-2345-2345-234567890123"), new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8170), null, "Регулярные накопления", "Откладывать 10% от дохода", 30, 1 },
+                    { new Guid("33333333-3333-3333-3333-333333333333"), new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8123), null, "Регулярные интенсивные тренировки", "Спорт 3 раза в неделю", 7, 3 },
+                    { new Guid("44444444-4444-4444-4444-444444444444"), new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8129), null, "Поддержание гигиены полости рта", "Чистить зубы 2 раза в день", 1, 2 },
+                    { new Guid("45678901-4567-4567-4567-456789012345"), new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8172), null, "Социальная активность", "Встреча с друзьями", 7, 1 },
+                    { new Guid("55555555-5555-5555-5555-555555555555"), new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8130), null, "Ежедневное чтение для саморазвития", "Читать 30 минут в день", 1, 1 },
+                    { new Guid("66666666-6666-6666-6666-666666666666"), new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8133), null, "Регулярное изучение иностранного языка", "Изучать английский 20 минут", 1, 1 },
+                    { new Guid("77777777-7777-7777-7777-777777777777"), new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8135), null, "Развитие через аудиоконтент", "Слушать образовательный подкаст", 7, 2 },
+                    { new Guid("88888888-8888-8888-8888-888888888888"), new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8136), null, "Ежедневная практика mindfulness", "Медитировать 10 минут", 1, 1 },
+                    { new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8138), null, "Ежедневные прогулки для снятия стресса", "Прогулка на свежем воздухе", 1, 1 },
+                    { new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8140), null, "Составление плана на следующий день", "Планировать день с вечера", 1, 1 },
+                    { new Guid("dddddddd-dddd-dddd-dddd-dddddddddddd"), new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8167), null, "Организация входящих сообщений", "Разбор почты 2 раза в день", 1, 2 }
                 });
 
             migrationBuilder.CreateIndex(
