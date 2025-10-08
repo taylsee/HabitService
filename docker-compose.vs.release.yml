@@ -1,0 +1,18 @@
+services:
+  habitservice.api:
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    container_name: habitservice_api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=habittracker;Username=postgres;Password=${DB_PASSWORD}
+
+  db:
+    container_name: habitservice_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: habittracker
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"

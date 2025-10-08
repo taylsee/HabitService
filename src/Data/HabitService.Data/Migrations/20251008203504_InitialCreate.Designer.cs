@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HabitService.Data.Migrations
 {
     [DbContext(typeof(HabitDbContext))]
-    [Migration("20251005110911_InitialCreate")]
+    [Migration("20251008203504_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -74,7 +74,7 @@ namespace HabitService.Data.Migrations
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            CreatedAt = new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8114),
+                            CreatedAt = new DateTime(2025, 10, 8, 20, 35, 4, 427, DateTimeKind.Utc).AddTicks(194),
                             Description = "Поддержание водного баланса организма",
                             Name = "Пить 2 литра воды в день",
                             PeriodInDays = 1,
@@ -83,7 +83,7 @@ namespace HabitService.Data.Migrations
                         new
                         {
                             Id = new Guid("22222222-2222-2222-2222-222222222222"),
-                            CreatedAt = new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8121),
+                            CreatedAt = new DateTime(2025, 10, 8, 20, 35, 4, 427, DateTimeKind.Utc).AddTicks(197),
                             Description = "Ежедневная физическая активность для бодрости",
                             Name = "Утренняя зарядка 15 минут",
                             PeriodInDays = 1,
@@ -92,7 +92,7 @@ namespace HabitService.Data.Migrations
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-333333333333"),
-                            CreatedAt = new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8123),
+                            CreatedAt = new DateTime(2025, 10, 8, 20, 35, 4, 427, DateTimeKind.Utc).AddTicks(199),
                             Description = "Регулярные интенсивные тренировки",
                             Name = "Спорт 3 раза в неделю",
                             PeriodInDays = 7,
@@ -101,7 +101,7 @@ namespace HabitService.Data.Migrations
                         new
                         {
                             Id = new Guid("44444444-4444-4444-4444-444444444444"),
-                            CreatedAt = new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8129),
+                            CreatedAt = new DateTime(2025, 10, 8, 20, 35, 4, 427, DateTimeKind.Utc).AddTicks(201),
                             Description = "Поддержание гигиены полости рта",
                             Name = "Чистить зубы 2 раза в день",
                             PeriodInDays = 1,
@@ -110,7 +110,7 @@ namespace HabitService.Data.Migrations
                         new
                         {
                             Id = new Guid("55555555-5555-5555-5555-555555555555"),
-                            CreatedAt = new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8130),
+                            CreatedAt = new DateTime(2025, 10, 8, 20, 35, 4, 427, DateTimeKind.Utc).AddTicks(202),
                             Description = "Ежедневное чтение для саморазвития",
                             Name = "Читать 30 минут в день",
                             PeriodInDays = 1,
@@ -119,7 +119,7 @@ namespace HabitService.Data.Migrations
                         new
                         {
                             Id = new Guid("66666666-6666-6666-6666-666666666666"),
-                            CreatedAt = new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8133),
+                            CreatedAt = new DateTime(2025, 10, 8, 20, 35, 4, 427, DateTimeKind.Utc).AddTicks(205),
                             Description = "Регулярное изучение иностранного языка",
                             Name = "Изучать английский 20 минут",
                             PeriodInDays = 1,
@@ -128,7 +128,7 @@ namespace HabitService.Data.Migrations
                         new
                         {
                             Id = new Guid("77777777-7777-7777-7777-777777777777"),
-                            CreatedAt = new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8135),
+                            CreatedAt = new DateTime(2025, 10, 8, 20, 35, 4, 427, DateTimeKind.Utc).AddTicks(206),
                             Description = "Развитие через аудиоконтент",
                             Name = "Слушать образовательный подкаст",
                             PeriodInDays = 7,
@@ -137,7 +137,7 @@ namespace HabitService.Data.Migrations
                         new
                         {
                             Id = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8136),
+                            CreatedAt = new DateTime(2025, 10, 8, 20, 35, 4, 427, DateTimeKind.Utc).AddTicks(208),
                             Description = "Ежедневная практика mindfulness",
                             Name = "Медитировать 10 минут",
                             PeriodInDays = 1,
@@ -146,7 +146,7 @@ namespace HabitService.Data.Migrations
                         new
                         {
                             Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
-                            CreatedAt = new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8138),
+                            CreatedAt = new DateTime(2025, 10, 8, 20, 35, 4, 427, DateTimeKind.Utc).AddTicks(210),
                             Description = "Ежедневные прогулки для снятия стресса",
                             Name = "Прогулка на свежем воздухе",
                             PeriodInDays = 1,
@@ -155,7 +155,7 @@ namespace HabitService.Data.Migrations
                         new
                         {
                             Id = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
-                            CreatedAt = new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8140),
+                            CreatedAt = new DateTime(2025, 10, 8, 20, 35, 4, 427, DateTimeKind.Utc).AddTicks(212),
                             Description = "Составление плана на следующий день",
                             Name = "Планировать день с вечера",
                             PeriodInDays = 1,
@@ -164,7 +164,7 @@ namespace HabitService.Data.Migrations
                         new
                         {
                             Id = new Guid("dddddddd-dddd-dddd-dddd-dddddddddddd"),
-                            CreatedAt = new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8167),
+                            CreatedAt = new DateTime(2025, 10, 8, 20, 35, 4, 427, DateTimeKind.Utc).AddTicks(214),
                             Description = "Организация входящих сообщений",
                             Name = "Разбор почты 2 раза в день",
                             PeriodInDays = 1,
@@ -173,7 +173,7 @@ namespace HabitService.Data.Migrations
                         new
                         {
                             Id = new Guid("12345678-1234-1234-1234-123456789012"),
-                            CreatedAt = new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8168),
+                            CreatedAt = new DateTime(2025, 10, 8, 20, 35, 4, 427, DateTimeKind.Utc).AddTicks(216),
                             Description = "Ежедневное отслеживание трат",
                             Name = "Учет расходов",
                             PeriodInDays = 1,
@@ -182,7 +182,7 @@ namespace HabitService.Data.Migrations
                         new
                         {
                             Id = new Guid("23456789-2345-2345-2345-234567890123"),
-                            CreatedAt = new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8170),
+                            CreatedAt = new DateTime(2025, 10, 8, 20, 35, 4, 427, DateTimeKind.Utc).AddTicks(217),
                             Description = "Регулярные накопления",
                             Name = "Откладывать 10% от дохода",
                             PeriodInDays = 30,
@@ -191,7 +191,7 @@ namespace HabitService.Data.Migrations
                         new
                         {
                             Id = new Guid("45678901-4567-4567-4567-456789012345"),
-                            CreatedAt = new DateTime(2025, 10, 5, 11, 9, 11, 885, DateTimeKind.Utc).AddTicks(8172),
+                            CreatedAt = new DateTime(2025, 10, 8, 20, 35, 4, 427, DateTimeKind.Utc).AddTicks(219),
                             Description = "Социальная активность",
                             Name = "Встреча с друзьями",
                             PeriodInDays = 7,

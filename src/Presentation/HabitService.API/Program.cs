@@ -13,7 +13,7 @@ namespace HabitService.API
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddControllers();
@@ -53,7 +53,6 @@ namespace HabitService.API
             var app = builder.Build();
 
 
-
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -64,13 +63,12 @@ namespace HabitService.API
 
             app.UseAuthorization();
 
-
             app.MapControllers();
 
             using (var scope = app.Services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<HabitDbContext>();
-                context.Database.Migrate();
+                await context.Database.MigrateAsync();
             }
 
             app.Run();

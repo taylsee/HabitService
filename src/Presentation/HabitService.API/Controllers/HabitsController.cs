@@ -1,4 +1,4 @@
-using AutoMapper;
+п»їusing AutoMapper;
 using HabitService.API.DTOs;
 using HabitService.Business.Interfaces.IServices;
 using HabitService.Business.Models;
@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HabitService.API.Controllers
 {
     /// <summary>
-    /// Контроллер для управления привычками
+    /// РљРѕРЅС‚СЂРѕР»Р»РµСЂ РґР»СЏ СѓРїСЂР°РІР»РµРЅРёСЏ РїСЂРёРІС‹С‡РєР°РјРё
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
@@ -23,11 +23,11 @@ namespace HabitService.API.Controllers
         }
 
         /// <summary>
-        /// Получить список предопределенных (системных) привычек
+        /// РџРѕР»СѓС‡РёС‚СЊ СЃРїРёСЃРѕРє РїСЂРµРґРѕРїСЂРµРґРµР»РµРЅРЅС‹С… (СЃРёСЃС‚РµРјРЅС‹С…) РїСЂРёРІС‹С‡РµРє
         /// </summary>
-        /// <param name="cancellationToken">Токен отмены операции</param>
-        /// <returns>Список системных привычек</returns>
-        /// <response code="200">Успешное получение списка привычек</response>
+        /// <param name="cancellationToken">РўРѕРєРµРЅ РѕС‚РјРµРЅС‹ РѕРїРµСЂР°С†РёРё</param>
+        /// <returns>РЎРїРёСЃРѕРє СЃРёСЃС‚РµРјРЅС‹С… РїСЂРёРІС‹С‡РµРє</returns>
+        /// <response code="200">РЈСЃРїРµС€РЅРѕРµ РїРѕР»СѓС‡РµРЅРёРµ СЃРїРёСЃРєР° РїСЂРёРІС‹С‡РµРє</response>
         [HttpGet("predefined")]
         [ProducesResponseType(typeof(List<HabitResponse>), 200)]
         public async Task<ActionResult<List<HabitResponse>>> GetPredefinedHabits(CancellationToken cancellationToken = default)
@@ -38,13 +38,13 @@ namespace HabitService.API.Controllers
         }
 
         /// <summary>
-        /// Получить привычки, созданные пользователем
+        /// РџРѕР»СѓС‡РёС‚СЊ РїСЂРёРІС‹С‡РєРё, СЃРѕР·РґР°РЅРЅС‹Рµ РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
-        /// <param name="cancellationToken">Токен отмены операции</param>
-        /// <returns>Список кастомных привычек пользователя</returns>
-        /// <response code="200">Успешное получение списка привычек</response>
-        /// <response code="400">Неверный запрос</response>
+        /// <param name="userId">РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ</param>
+        /// <param name="cancellationToken">РўРѕРєРµРЅ РѕС‚РјРµРЅС‹ РѕРїРµСЂР°С†РёРё</param>
+        /// <returns>РЎРїРёСЃРѕРє РєР°СЃС‚РѕРјРЅС‹С… РїСЂРёРІС‹С‡РµРє РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ</returns>
+        /// <response code="200">РЈСЃРїРµС€РЅРѕРµ РїРѕР»СѓС‡РµРЅРёРµ СЃРїРёСЃРєР° РїСЂРёРІС‹С‡РµРє</response>
+        /// <response code="400">РќРµРІРµСЂРЅС‹Р№ Р·Р°РїСЂРѕСЃ</response>
         [HttpGet("user/{userId}/custom")]
         [ProducesResponseType(typeof(List<HabitResponse>), 200)]
         [ProducesResponseType(400)]
@@ -56,15 +56,15 @@ namespace HabitService.API.Controllers
         }
 
         /// <summary>
-        /// Получить привычку по идентификатору
+        /// РџРѕР»СѓС‡РёС‚СЊ РїСЂРёРІС‹С‡РєСѓ РїРѕ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂСѓ
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
-        /// <param name="habitId">Идентификатор привычки</param>
-        /// <param name="cancellationToken">Токен отмены операции</param>
-        /// <returns>Данные привычки</returns>
-        /// <response code="200">Успешное получение привычки</response>
-        /// <response code="404">Привычка не найдена</response>
-        /// <response code="403">Доступ запрещен</response>
+        /// <param name="userId">РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ</param>
+        /// <param name="habitId">РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РїСЂРёРІС‹С‡РєРё</param>
+        /// <param name="cancellationToken">РўРѕРєРµРЅ РѕС‚РјРµРЅС‹ РѕРїРµСЂР°С†РёРё</param>
+        /// <returns>Р”Р°РЅРЅС‹Рµ РїСЂРёРІС‹С‡РєРё</returns>
+        /// <response code="200">РЈСЃРїРµС€РЅРѕРµ РїРѕР»СѓС‡РµРЅРёРµ РїСЂРёРІС‹С‡РєРё</response>
+        /// <response code="404">РџСЂРёРІС‹С‡РєР° РЅРµ РЅР°Р№РґРµРЅР°</response>
+        /// <response code="403">Р”РѕСЃС‚СѓРї Р·Р°РїСЂРµС‰РµРЅ</response>
         [HttpGet("user/{userId}/{habitId}")]
         [ProducesResponseType(typeof(HabitResponse), 200)]
         [ProducesResponseType(404)]
@@ -83,14 +83,14 @@ namespace HabitService.API.Controllers
         }
 
         /// <summary>
-        /// Создать привычку для пользователя (привычка лишь создается в таблице Habit, она не привязывается к пользователю в таблице UserHabit)
+        /// РЎРѕР·РґР°С‚СЊ РїСЂРёРІС‹С‡РєСѓ РґР»СЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ (РїСЂРёРІС‹С‡РєР° Р»РёС€СЊ СЃРѕР·РґР°РµС‚СЃСЏ РІ С‚Р°Р±Р»РёС†Рµ Habit, РѕРЅР° РЅРµ РїСЂРёРІСЏР·С‹РІР°РµС‚СЃСЏ Рє РїРѕР»СЊР·РѕРІР°С‚РµР»СЋ РІ С‚Р°Р±Р»РёС†Рµ UserHabit)
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
-        /// <param name="request">Данные для создания привычки</param>
-        /// <param name="cancellationToken">Токен отмены операции</param>
-        /// <returns>Созданная привычка</returns>
-        /// <response code="201">Привычка успешно создана</response>
-        /// <response code="400">Неверные данные запроса</response>
+        /// <param name="userId">РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ</param>
+        /// <param name="request">Р”Р°РЅРЅС‹Рµ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РїСЂРёРІС‹С‡РєРё</param>
+        /// <param name="cancellationToken">РўРѕРєРµРЅ РѕС‚РјРµРЅС‹ РѕРїРµСЂР°С†РёРё</param>
+        /// <returns>РЎРѕР·РґР°РЅРЅР°СЏ РїСЂРёРІС‹С‡РєР°</returns>
+        /// <response code="201">РџСЂРёРІС‹С‡РєР° СѓСЃРїРµС€РЅРѕ СЃРѕР·РґР°РЅР°</response>
+        /// <response code="400">РќРµРІРµСЂРЅС‹Рµ РґР°РЅРЅС‹Рµ Р·Р°РїСЂРѕСЃР°</response>
         [HttpPost("user/{userId}/custom")]
         [ProducesResponseType(typeof(HabitResponse), 201)]
         [ProducesResponseType(400)]
@@ -124,17 +124,17 @@ namespace HabitService.API.Controllers
         }
 
         /// <summary>
-        /// Обновить значения у существующуей привычки
+        /// РћР±РЅРѕРІРёС‚СЊ Р·РЅР°С‡РµРЅРёСЏ Сѓ СЃСѓС‰РµСЃС‚РІСѓСЋС‰СѓРµР№ РїСЂРёРІС‹С‡РєРё
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
-        /// <param name="habitId">Идентификатор привычки</param>
-        /// <param name="request">Данные для обновления</param>
-        /// <param name="cancellationToken">Токен отмены операции</param>
-        /// <returns>Обновленная привычка</returns>
-        /// <response code="200">Привычка успешно обновлена</response>
-        /// <response code="400">Неверные данные запроса</response>
-        /// <response code="404">Привычка не найдена</response>
-        /// <response code="403">Доступ запрещен</response>
+        /// <param name="userId">РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ</param>
+        /// <param name="habitId">РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РїСЂРёРІС‹С‡РєРё</param>
+        /// <param name="request">Р”Р°РЅРЅС‹Рµ РґР»СЏ РѕР±РЅРѕРІР»РµРЅРёСЏ</param>
+        /// <param name="cancellationToken">РўРѕРєРµРЅ РѕС‚РјРµРЅС‹ РѕРїРµСЂР°С†РёРё</param>
+        /// <returns>РћР±РЅРѕРІР»РµРЅРЅР°СЏ РїСЂРёРІС‹С‡РєР°</returns>
+        /// <response code="200">РџСЂРёРІС‹С‡РєР° СѓСЃРїРµС€РЅРѕ РѕР±РЅРѕРІР»РµРЅР°</response>
+        /// <response code="400">РќРµРІРµСЂРЅС‹Рµ РґР°РЅРЅС‹Рµ Р·Р°РїСЂРѕСЃР°</response>
+        /// <response code="404">РџСЂРёРІС‹С‡РєР° РЅРµ РЅР°Р№РґРµРЅР°</response>
+        /// <response code="403">Р”РѕСЃС‚СѓРї Р·Р°РїСЂРµС‰РµРЅ</response>
         [HttpPut("user/{userId}/{habitId}")]
         [ProducesResponseType(typeof(HabitResponse), 200)]
         [ProducesResponseType(400)]
@@ -180,16 +180,16 @@ namespace HabitService.API.Controllers
         }
 
         /// <summary>
-        /// Удалить привычку, созданную пользователем
+        /// РЈРґР°Р»РёС‚СЊ РїСЂРёРІС‹С‡РєСѓ, СЃРѕР·РґР°РЅРЅСѓСЋ РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
-        /// <param name="habitId">Идентификатор привычки</param>
-        /// <param name="cancellationToken">Токен отмены операции</param>
-        /// <returns>Результат операции</returns>
-        /// <response code="204">Привычка успешно удалена</response>
-        /// <response code="400">Неверные данные запроса</response>
-        /// <response code="404">Привычка не найдена</response>
-        /// <response code="403">Доступ запрещен</response>
+        /// <param name="userId">РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ</param>
+        /// <param name="habitId">РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РїСЂРёРІС‹С‡РєРё</param>
+        /// <param name="cancellationToken">РўРѕРєРµРЅ РѕС‚РјРµРЅС‹ РѕРїРµСЂР°С†РёРё</param>
+        /// <returns>Р РµР·СѓР»СЊС‚Р°С‚ РѕРїРµСЂР°С†РёРё</returns>
+        /// <response code="204">РџСЂРёРІС‹С‡РєР° СѓСЃРїРµС€РЅРѕ СѓРґР°Р»РµРЅР°</response>
+        /// <response code="400">РќРµРІРµСЂРЅС‹Рµ РґР°РЅРЅС‹Рµ Р·Р°РїСЂРѕСЃР°</response>
+        /// <response code="404">РџСЂРёРІС‹С‡РєР° РЅРµ РЅР°Р№РґРµРЅР°</response>
+        /// <response code="403">Р”РѕСЃС‚СѓРї Р·Р°РїСЂРµС‰РµРЅ</response>
         [HttpDelete("user/{userId}/custom/{habitId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]

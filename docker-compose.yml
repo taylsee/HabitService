@@ -1,0 +1,35 @@
+services:
+  habitservice.api:
+    image: ${DOCKER_REGISTRY-}habitserviceapi
+    expose:
+      - "8080"
+      - "8081"
+    build:
+      context: .
+      dockerfile: src/Presentation/HabitService.API/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - backend
+
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend
+
+volumes:
+  postgres_data:
+
+networks:
+  backend:
+    driver: bridge
