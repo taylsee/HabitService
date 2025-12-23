@@ -2,6 +2,7 @@
 using HabitService.API.DTOs;
 using HabitService.Business.Interfaces.IServices;
 using HabitService.Business.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HabitService.API.Controllers
@@ -10,7 +11,7 @@ namespace HabitService.API.Controllers
     /// Контроллер для управления привычками пользователей
     /// </summary>
     [ApiController]
-    [Route("api/users/{userId}/habits")]
+    [Route("api/habits")]
     public class UserHabitsController : ControllerBase
     {
         private readonly IUserHabitService _userHabitService;
@@ -29,15 +30,15 @@ namespace HabitService.API.Controllers
         /// <summary>
         /// Получить все привычки пользователя
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
         /// <param name="cancellationToken">Токен отмены операции</param>
         /// <returns>Список привычек пользователя с прогрессом</returns>
         /// <response code="200">Успешное получение списка привычек</response>
         [HttpGet]
         [ProducesResponseType(typeof(List<UserHabitResponse>), 200)]
-        public async Task<ActionResult<List<UserHabitResponse>>> GetUserHabits(Guid userId, CancellationToken cancellationToken = default)
+        [Authorize]
+        public async Task<ActionResult<List<UserHabitResponse>>> GetUserHabits(CancellationToken cancellationToken = default)
         {
-            var userHabits = await _userHabitService.GetUserHabitsAsync(userId, cancellationToken);
+            var userHabits = await _userHabitService.GetUserHabitsAsync(cancellationToken);
 
             var response = new List<UserHabitResponse>();
             foreach (var userHabit in userHabits)
@@ -52,7 +53,6 @@ namespace HabitService.API.Controllers
         /// <summary>
         /// Получить конкретную привычку пользователя по идентификатору
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
         /// <param name="userHabitId">Идентификатор пользовательской привычки</param>
         /// <param name="cancellationToken">Токен отмены операции</param>
         /// <returns>Данные привычки пользователя с прогрессом</returns>
@@ -61,10 +61,11 @@ namespace HabitService.API.Controllers
         [HttpGet("{userHabitId}")]
         [ProducesResponseType(typeof(UserHabitResponse), 200)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<UserHabitResponse>> GetUserHabitById(Guid userId, Guid userHabitId, CancellationToken cancellationToken = default)
+        [Authorize]
+        public async Task<ActionResult<UserHabitResponse>> GetUserHabitById(Guid userHabitId, CancellationToken cancellationToken = default)
         {
             var userHabit = await _userHabitService.GetUserHabitByIdAsync(userHabitId, cancellationToken);
-            if (userHabit == null || userHabit.UserId != userId)
+            if (userHabit == null)
                 return NotFound();
 
             var response = await MapToUserHabitResponse(userHabit, cancellationToken);
@@ -74,7 +75,6 @@ namespace HabitService.API.Controllers
         /// <summary>
         /// Добавить привычку пользователю
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
         /// <param name="habitId">Идентификатор привычки (системной или кастомной)</param>
         /// <param name="cancellationToken">Токен отмены операции</param>
         /// <returns>Созданная пользовательская привычка</returns>
@@ -83,17 +83,18 @@ namespace HabitService.API.Controllers
         [HttpPost("add/{habitId}")]
         [ProducesResponseType(typeof(UserHabitResponse), 201)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult<UserHabitResponse>> AddHabitToUser(Guid userId, Guid habitId, CancellationToken cancellationToken = default)
+        [Authorize]
+        public async Task<ActionResult<UserHabitResponse>> AddHabitToUser(Guid habitId, CancellationToken cancellationToken = default)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             try
             {
-                var userHabit = await _userHabitService.AddHabitToUserAsync(userId, habitId, cancellationToken);
+                var userHabit = await _userHabitService.AddHabitToUserAsync(habitId, cancellationToken);
                 var response = await MapToUserHabitResponse(userHabit, cancellationToken);
                 return CreatedAtAction(
                     nameof(GetUserHabitById),
-                    new { userId, userHabitId = userHabit.Id },
+                    new {userHabitId = userHabit.Id },
                     response);
             }
             catch (Exception ex)
@@ -105,7 +106,6 @@ namespace HabitService.API.Controllers
         /// <summary>
         /// Удалить привычку у пользователя
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
         /// <param name="userHabitId">Идентификатор пользовательской привычки</param>
         /// <param name="cancellationToken">Токен отмены операции</param>
         /// <returns>Результат операции</returns>
@@ -116,7 +116,8 @@ namespace HabitService.API.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> RemoveHabitFromUser(Guid userId, Guid userHabitId, CancellationToken cancellationToken = default)
+        [Authorize]
+        public async Task<IActionResult> RemoveHabitFromUser(Guid userHabitId, CancellationToken cancellationToken = default)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -124,7 +125,7 @@ namespace HabitService.API.Controllers
             try
             {
                 var userHabit = await _userHabitService.GetUserHabitByIdAsync(userHabitId, cancellationToken);
-                if (userHabit == null || userHabit.UserId != userId)
+                if (userHabit == null)
                     return NotFound();
 
                 await _userHabitService.RemoveHabitFromUserAsync(userHabitId, cancellationToken);

@@ -1,4 +1,5 @@
-﻿using HabitService.Business.Interfaces.IServices;
+﻿using HabitService.Business.Auth;
+using HabitService.Business.Interfaces.IServices;
 using HabitService.Business.Interfaces.Repositories;
 using HabitService.Business.Models;
 using System;
@@ -14,19 +15,22 @@ namespace HabitService.Business.Services
         private readonly IUserHabitRepository _userHabitRepository;
         private readonly IHabitRepository _habitRepository;
         private readonly IHabitCompletionService _completionService;
-
+        private readonly IUserContext _context;
         public UserHabitService(
             IUserHabitRepository userHabitRepository,
             IHabitRepository habitRepository,
-            IHabitCompletionService completionService)
+            IHabitCompletionService completionService,
+            IUserContext context)
         {
             _userHabitRepository = userHabitRepository;
             _habitRepository = habitRepository;
             _completionService = completionService;
+            _context = context;
         }
 
-        public async Task<List<UserHabit>> GetUserHabitsAsync(Guid userId, CancellationToken cancellationToken = default)
+        public async Task<List<UserHabit>> GetUserHabitsAsync(CancellationToken cancellationToken = default)
         {
+            var userId = _context.UserId;
             var habits = await _userHabitRepository.GetByUserIdAsync(userId, cancellationToken);
 
             foreach (var userHabit in habits)
@@ -37,12 +41,12 @@ namespace HabitService.Business.Services
             return habits;
         }
 
-        public async Task<UserHabit> AddHabitToUserAsync(Guid userId, Guid habitId, CancellationToken cancellationToken = default)
+        public async Task<UserHabit> AddHabitToUserAsync(Guid habitId, CancellationToken cancellationToken = default)
         {
             var habit = await _habitRepository.GetByIdAsync(habitId);
             if (habit == null)
                 throw new Exception($"Habit with ID {habitId} not found");
-
+            var userId = _context.UserId;
             var existingUserHabit = await _userHabitRepository.GetByUserAndHabitIdAsync(userId, habitId);
             if (existingUserHabit != null)
                 throw new Exception($"User {userId} already has habit {habitId}");

@@ -1,4 +1,5 @@
-﻿using HabitService.Business.Interfaces.IRepositories;
+﻿using HabitService.Business.Auth;
+using HabitService.Business.Interfaces.IRepositories;
 using HabitService.Business.Interfaces.IServices;
 using HabitService.Business.Interfaces.Repositories;
 using HabitService.Business.Models;

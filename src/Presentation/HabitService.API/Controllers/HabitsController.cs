@@ -2,6 +2,7 @@
 using HabitService.API.DTOs;
 using HabitService.Business.Interfaces.IServices;
 using HabitService.Business.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HabitService.API.Controllers
@@ -40,17 +41,17 @@ namespace HabitService.API.Controllers
         /// <summary>
         /// Получить привычки, созданные пользователем
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
         /// <param name="cancellationToken">Токен отмены операции</param>
         /// <returns>Список кастомных привычек пользователя</returns>
         /// <response code="200">Успешное получение списка привычек</response>
         /// <response code="400">Неверный запрос</response>
-        [HttpGet("user/{userId}/custom")]
+        [HttpGet("user/custom")]
         [ProducesResponseType(typeof(List<HabitResponse>), 200)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult<List<HabitResponse>>> GetUserCustomHabits(Guid userId, CancellationToken cancellationToken = default)
+        [Authorize]
+        public async Task<ActionResult<List<HabitResponse>>> GetUserCustomHabits(CancellationToken cancellationToken = default)
         {
-            var habits = await _habitCatalogService.GetUserCustomHabitsAsync(userId, cancellationToken);
+            var habits = await _habitCatalogService.GetUserCustomHabitsAsync(cancellationToken);
             var response = _mapper.Map<List<HabitResponse>>(habits);
             return Ok(response);
         }
@@ -58,24 +59,24 @@ namespace HabitService.API.Controllers
         /// <summary>
         /// Получить привычку по идентификатору
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
         /// <param name="habitId">Идентификатор привычки</param>
         /// <param name="cancellationToken">Токен отмены операции</param>
         /// <returns>Данные привычки</returns>
         /// <response code="200">Успешное получение привычки</response>
         /// <response code="404">Привычка не найдена</response>
         /// <response code="403">Доступ запрещен</response>
-        [HttpGet("user/{userId}/{habitId}")]
+        [HttpGet("user/{habitId}")]
         [ProducesResponseType(typeof(HabitResponse), 200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(403)]
-        public async Task<ActionResult<HabitResponse>> GetHabitById(Guid userId, Guid habitId, CancellationToken cancellationToken = default)
+        [Authorize]
+        public async Task<ActionResult<HabitResponse>> GetHabitById(Guid habitId, CancellationToken cancellationToken = default)
         {
             var habit = await _habitCatalogService.GetHabitByIdAsync(habitId, cancellationToken);
             if (habit == null)
                 return NotFound();
 
-            if (habit.CreatedBy.HasValue && habit.CreatedBy != userId)
+            if (habit.CreatedBy.HasValue)
                 return Forbid();
 
             var response = _mapper.Map<HabitResponse>(habit);
@@ -91,9 +92,10 @@ namespace HabitService.API.Controllers
         /// <returns>Созданная привычка</returns>
         /// <response code="201">Привычка успешно создана</response>
         /// <response code="400">Неверные данные запроса</response>
-        [HttpPost("user/{userId}/custom")]
+        [HttpPost("user/custom")]
         [ProducesResponseType(typeof(HabitResponse), 201)]
         [ProducesResponseType(400)]
+        [Authorize]
         public async Task<ActionResult<HabitResponse>> CreateCustomHabit(
             Guid userId,
             [FromBody] CreateUpdateHabitRequest request,
@@ -101,12 +103,10 @@ namespace HabitService.API.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
             try
             {
                 var habit = _mapper.Map<Habit>(request);
                 var createdHabit = await _habitCatalogService.CreateCustomHabitAsync(
-                    userId,
                     habit.Name,
                     habit.Description,
                     habit.PeriodInDays,
@@ -115,7 +115,7 @@ namespace HabitService.API.Controllers
                 );
 
                 var response = _mapper.Map<HabitResponse>(createdHabit);
-                return CreatedAtAction(nameof(GetHabitById), new { userId = userId, habitId = createdHabit.Id }, response);
+                return CreatedAtAction(nameof(GetHabitById), new { habitId = createdHabit.Id }, response);
             }
             catch (Exception ex)
             {
@@ -126,7 +126,6 @@ namespace HabitService.API.Controllers
         /// <summary>
         /// Обновить значения у существующуей привычки
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
         /// <param name="habitId">Идентификатор привычки</param>
         /// <param name="request">Данные для обновления</param>
         /// <param name="cancellationToken">Токен отмены операции</param>
@@ -135,13 +134,12 @@ namespace HabitService.API.Controllers
         /// <response code="400">Неверные данные запроса</response>
         /// <response code="404">Привычка не найдена</response>
         /// <response code="403">Доступ запрещен</response>
-        [HttpPut("user/{userId}/{habitId}")]
+        [HttpPut("user/{habitId}")]
         [ProducesResponseType(typeof(HabitResponse), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(403)]
         public async Task<ActionResult<HabitResponse>> UpdateHabit(
-            Guid userId,
             Guid habitId,
             [FromBody] CreateUpdateHabitRequest request,
             CancellationToken cancellationToken = default)
@@ -155,7 +153,7 @@ namespace HabitService.API.Controllers
                 if (existingHabit == null)
                     return NotFound();
 
-                if (existingHabit.CreatedBy.HasValue && existingHabit.CreatedBy != userId)
+                if (existingHabit.CreatedBy.HasValue)
                     return Forbid();
 
                 if (!existingHabit.CreatedBy.HasValue)
@@ -182,7 +180,6 @@ namespace HabitService.API.Controllers
         /// <summary>
         /// Удалить привычку, созданную пользователем
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
         /// <param name="habitId">Идентификатор привычки</param>
         /// <param name="cancellationToken">Токен отмены операции</param>
         /// <returns>Результат операции</returns>
@@ -190,12 +187,12 @@ namespace HabitService.API.Controllers
         /// <response code="400">Неверные данные запроса</response>
         /// <response code="404">Привычка не найдена</response>
         /// <response code="403">Доступ запрещен</response>
-        [HttpDelete("user/{userId}/custom/{habitId}")]
+        [HttpDelete("user/custom/{habitId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(403)]
-        public async Task<IActionResult> DeleteCustomHabit(Guid userId, Guid habitId, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> DeleteCustomHabit(Guid habitId, CancellationToken cancellationToken = default)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -206,10 +203,10 @@ namespace HabitService.API.Controllers
                 if (existingHabit == null)
                     return NotFound();
 
-                if (!existingHabit.CreatedBy.HasValue || existingHabit.CreatedBy != userId)
+                if (!existingHabit.CreatedBy.HasValue)
                     return Forbid();
 
-                await _habitCatalogService.DeleteCustomHabitAsync(userId, habitId, cancellationToken);
+                await _habitCatalogService.DeleteCustomHabitAsync(habitId, cancellationToken);
                 return NoContent();
             }
             catch (Exception ex)

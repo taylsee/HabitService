@@ -1,4 +1,5 @@
-﻿using HabitService.Business.Interfaces.IServices;
+﻿using HabitService.Business.Auth;
+using HabitService.Business.Interfaces.IServices;
 using HabitService.Business.Interfaces.Repositories;
 using HabitService.Business.Models;
 using System;
@@ -12,10 +13,12 @@ namespace HabitService.Business.Services
     public class HabitCatalogService : IHabitCatalogService
     {
         private readonly IHabitRepository _habitRepository;
+        private readonly IUserContext _context;
 
-        public HabitCatalogService(IHabitRepository habitRepository)
+        public HabitCatalogService(IHabitRepository habitRepository, IUserContext context)
         {
             _habitRepository = habitRepository;
+            _context = context;
         }
 
         public async Task<List<Habit>> GetPredefinedHabitsAsync(CancellationToken cancellationToken = default)
@@ -23,8 +26,9 @@ namespace HabitService.Business.Services
             return await _habitRepository.GetPredefinedHabitsAsync(cancellationToken);
         }
 
-        public async Task<List<Habit>> GetUserCustomHabitsAsync(Guid userId, CancellationToken cancellationToken = default)
+        public async Task<List<Habit>> GetUserCustomHabitsAsync(CancellationToken cancellationToken = default)
         {
+            var userId = _context.UserId;
             return await _habitRepository.GetUserCustomHabitsAsync(userId, cancellationToken);
         }
         public async Task UpdateHabitAsync(Guid habitId, string name, string description,
@@ -48,7 +52,7 @@ namespace HabitService.Business.Services
             await _habitRepository.UpdateAsync(habit, cancellationToken);
         }
 
-        public async Task<Habit> CreateCustomHabitAsync(Guid userId, string name, string description,
+        public async Task<Habit> CreateCustomHabitAsync(string name, string description,
             int PeriodInDays, int targetValue, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -56,7 +60,7 @@ namespace HabitService.Business.Services
 
             if (targetValue <= 0)
                 throw new ArgumentException("Target value must be positive");
-
+            var userId = _context.UserId;
             var habit = new Habit
             {
                 Id = Guid.NewGuid(),
@@ -71,13 +75,13 @@ namespace HabitService.Business.Services
             return await _habitRepository.AddAsync(habit, cancellationToken);
         }
 
-        public async Task DeleteCustomHabitAsync(Guid userId, Guid habitId, CancellationToken cancellationToken = default)
+        public async Task DeleteCustomHabitAsync(Guid habitId, CancellationToken cancellationToken = default)
         {
             var habit = await _habitRepository.GetByIdAsync(habitId);
 
             if (habit == null)
                 throw new Exception($"Habit with ID {habitId} not found");
-
+            var userId = _context.UserId;
             if (habit.CreatedBy != userId)
                 throw new UnauthorizedAccessException("User can only delete their own custom habits");
 

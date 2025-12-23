@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HabitService.API.DTOs;
 using HabitService.Business.Interfaces.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HabitService.API.Controllers
@@ -9,7 +10,7 @@ namespace HabitService.API.Controllers
     /// Контроллер для управления выполнениями привычек
     /// </summary>
     [ApiController]
-    [Route("api/users/{userId}/habits/{userHabitId}/completions")]
+    [Route("api/habits/{userHabitId}/completions")]
     public class HabitCompletionsController : ControllerBase
     {
         private readonly IHabitCompletionService _completionService;
@@ -28,20 +29,19 @@ namespace HabitService.API.Controllers
         /// <summary>
         /// Проверяет принадлежность пользовательской привычки пользователю
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
         /// <param name="userHabitId">Идентификатор пользовательской привычки</param>
         /// <param name="cancellationToken">Токен отмены операции</param>
         /// <returns>True если привычка принадлежит пользователю</returns>
-        private async Task<bool> IsUserHabitOwnerAsync(Guid userId, Guid userHabitId, CancellationToken cancellationToken)
+        
+        private async Task<bool> IsUserHabitOwnerAsync(Guid userHabitId, CancellationToken cancellationToken)
         {
             var userHabit = await _userHabitService.GetUserHabitByIdAsync(userHabitId, cancellationToken);
-            return userHabit != null && userHabit.UserId == userId;
+            return userHabit != null;
         }
 
         /// <summary>
         /// Получить список всех выполнений привычки
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
         /// <param name="userHabitId">Идентификатор пользовательской привычки</param>
         /// <param name="cancellationToken">Токен отмены операции</param>
         /// <returns>Список выполнений привычки</returns>
@@ -52,14 +52,14 @@ namespace HabitService.API.Controllers
         [ProducesResponseType(typeof(List<HabitCompletionResponse>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
+        [Authorize]
         public async Task<ActionResult<List<HabitCompletionResponse>>> GetCompletions(
-            Guid userId,
             Guid userHabitId,
             CancellationToken cancellationToken = default)
         {
             try
             {
-                if (!await IsUserHabitOwnerAsync(userId, userHabitId, cancellationToken))
+                if (!await IsUserHabitOwnerAsync(userHabitId, cancellationToken))
                     return NotFound();
 
                 var completions = await _completionService.GetCompletionsAsync(userHabitId, cancellationToken);
@@ -75,7 +75,6 @@ namespace HabitService.API.Controllers
         /// <summary>
         /// Получить конкретное выполнение привычки по идентификатору
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
         /// <param name="userHabitId">Идентификатор пользовательской привычки</param>
         /// <param name="completionId">Идентификатор выполнения</param>
         /// <param name="cancellationToken">Токен отмены операции</param>
@@ -87,15 +86,15 @@ namespace HabitService.API.Controllers
         [ProducesResponseType(typeof(HabitCompletionResponse), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
+        [Authorize]
         public async Task<ActionResult<HabitCompletionResponse>> GetCompletionById(
-            Guid userId,
             Guid userHabitId,
             Guid completionId,
             CancellationToken cancellationToken = default)
         {
             try
             {
-                if (!await IsUserHabitOwnerAsync(userId, userHabitId, cancellationToken))
+                if (!await IsUserHabitOwnerAsync(userHabitId, cancellationToken))
                     return NotFound();
 
                 var completion = await _completionService.GetCompletionByIdAsync(completionId, cancellationToken);
@@ -114,7 +113,6 @@ namespace HabitService.API.Controllers
         /// <summary>
         /// Получить текущий прогресс выполнения привычки
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
         /// <param name="userHabitId">Идентификатор пользовательской привычки</param>
         /// <param name="cancellationToken">Токен отмены операции</param>
         /// <returns>Текущий прогресс выполнения привычки</returns>
@@ -125,14 +123,14 @@ namespace HabitService.API.Controllers
         [ProducesResponseType(typeof(HabitProgressResponse), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
+        [Authorize]
         public async Task<ActionResult<HabitProgressResponse>> GetCurrentProgress(
-            Guid userId,
             Guid userHabitId,
             CancellationToken cancellationToken = default)
         {
             try
             {
-                if (!await IsUserHabitOwnerAsync(userId, userHabitId, cancellationToken))
+                if (!await IsUserHabitOwnerAsync(userHabitId, cancellationToken))
                     return NotFound();
 
                 var progress = await _completionService.GetCurrentProgressAsync(userHabitId, cancellationToken);
@@ -148,7 +146,6 @@ namespace HabitService.API.Controllers
         /// <summary>
         /// Зафиксировать выполнение привычки
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
         /// <param name="userHabitId">Идентификатор пользовательской привычки</param>
         /// <param name="request">Данные выполнения</param>
         /// <param name="cancellationToken">Токен отмены операции</param>
@@ -160,8 +157,8 @@ namespace HabitService.API.Controllers
         [ProducesResponseType(typeof(HabitCompletionResponse), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
+        [Authorize]
         public async Task<ActionResult<HabitCompletionResponse>> CompleteHabit(
-            Guid userId,
             Guid userHabitId,
             [FromBody] CompleteUpdateHabitRequest request,
             CancellationToken cancellationToken = default)
@@ -171,7 +168,7 @@ namespace HabitService.API.Controllers
 
             try
             {
-                if (!await IsUserHabitOwnerAsync(userId, userHabitId, cancellationToken))
+                if (!await IsUserHabitOwnerAsync(userHabitId, cancellationToken))
                     return NotFound();
 
                 var completion = await _completionService.CompleteHabitAsync(
@@ -192,7 +189,6 @@ namespace HabitService.API.Controllers
         /// <summary>
         /// Сбросить прогресс выполнения привычки
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
         /// <param name="userHabitId">Идентификатор пользовательской привычки</param>
         /// <param name="cancellationToken">Токен отмены операции</param>
         /// <returns>Результат операции</returns>
@@ -203,8 +199,8 @@ namespace HabitService.API.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
+        [Authorize]
         public async Task<IActionResult> ResetProgress(
-            Guid userId,
             Guid userHabitId,
             CancellationToken cancellationToken = default)
         {
@@ -214,7 +210,7 @@ namespace HabitService.API.Controllers
             try
             {
                 var userHabit = await _userHabitService.GetUserHabitByIdAsync(userHabitId, cancellationToken);
-                if (userHabit == null || userHabit.UserId != userId)
+                if (userHabit == null)
                     return NotFound();
 
                 await _completionService.ResetHabitProgressAsync(userHabit, cancellationToken);
@@ -229,7 +225,6 @@ namespace HabitService.API.Controllers
         /// <summary>
         /// Обновить данные выполнения привычки
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
         /// <param name="userHabitId">Идентификатор пользовательской привычки</param>
         /// <param name="completionId">Идентификатор выполнения</param>
         /// <param name="request">Новые данные выполнения</param>
@@ -242,8 +237,9 @@ namespace HabitService.API.Controllers
         [ProducesResponseType(typeof(HabitCompletionResponse), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
+        [Authorize]
         public async Task<ActionResult<HabitCompletionResponse>> UpdateCompletion(
-            Guid userId,
+
             Guid userHabitId,
             Guid completionId,
             [FromBody] CompleteUpdateHabitRequest request,
@@ -254,7 +250,7 @@ namespace HabitService.API.Controllers
 
             try
             {
-                if (!await IsUserHabitOwnerAsync(userId, userHabitId, cancellationToken))
+                if (!await IsUserHabitOwnerAsync(userHabitId, cancellationToken))
                     return NotFound();
 
                 var completion = await _completionService.GetCompletionByIdAsync(completionId, cancellationToken);
@@ -280,7 +276,6 @@ namespace HabitService.API.Controllers
         /// <summary>
         /// Удалить выполнение привычки
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя</param>
         /// <param name="userHabitId">Идентификатор пользовательской привычки</param>
         /// <param name="completionId">Идентификатор выполнения</param>
         /// <param name="cancellationToken">Токен отмены операции</param>
@@ -292,8 +287,8 @@ namespace HabitService.API.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
+        [Authorize]
         public async Task<IActionResult> DeleteCompletion(
-            Guid userId,
             Guid userHabitId,
             Guid completionId,
             CancellationToken cancellationToken = default)
@@ -303,7 +298,7 @@ namespace HabitService.API.Controllers
 
             try
             {
-                if (!await IsUserHabitOwnerAsync(userId, userHabitId, cancellationToken))
+                if (!await IsUserHabitOwnerAsync(userHabitId, cancellationToken))
                     return NotFound();
 
                 var completion = await _completionService.GetCompletionByIdAsync(completionId, cancellationToken);

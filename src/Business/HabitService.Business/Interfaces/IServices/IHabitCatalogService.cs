@@ -10,10 +10,10 @@ namespace HabitService.Business.Interfaces.IServices
     public interface IHabitCatalogService
     {
         Task<List<Habit>> GetPredefinedHabitsAsync(CancellationToken cancellationToken = default);
-        Task<List<Habit>> GetUserCustomHabitsAsync(Guid userId, CancellationToken cancellationToken = default);
-        Task<Habit> CreateCustomHabitAsync(Guid userId, string name, string description,
+        Task<List<Habit>> GetUserCustomHabitsAsync(CancellationToken cancellationToken = default);
+        Task<Habit> CreateCustomHabitAsync(string name, string description,
             int PeriodInDays, int targetValue, CancellationToken cancellationToken = default);
-        Task DeleteCustomHabitAsync(Guid userId, Guid habitId, CancellationToken cancellationToken = default);
+        Task DeleteCustomHabitAsync(Guid habitId, CancellationToken cancellationToken = default);
         Task<Habit?> GetHabitByIdAsync(Guid habitId, CancellationToken cancellationToken = default);
         Task UpdateHabitAsync(Guid habitId, string name, string description,
             int periodInDays, int targetValue, CancellationToken cancellationToken = default);
