@@ -1,5 +1,4 @@
 ﻿using HabitService.API.Controllers;
-using HabitService.API.Extensions;
 using HabitService.Business.Interfaces.IRepositories;
 using HabitService.Business.Interfaces.IServices;
 using HabitService.Business.Interfaces.Repositories;
@@ -86,7 +85,8 @@ namespace HabitService.API
             builder.Services.AddScoped<IHabitRepository, HabitRepository>();
             builder.Services.AddScoped<IUserHabitRepository, UserHabitRepository>();
             builder.Services.AddScoped<IHabitCompletionRepository, HabitCompletionRepository>();
-            builder.Services.AddAuthenticationInternal();
+            var startup = new Startup(builder.Configuration);
+            startup.ConfigureServices(builder.Services);
             builder.Services.AddAutoMapper(typeof(Program));
 
             var app = builder.Build();
